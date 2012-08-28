@@ -1,6 +1,3 @@
-# TODO
-# de-uglify the constructor
-
 from __future__ import division
 import math
 
@@ -23,7 +20,7 @@ class Particle(object):
         self.radius = radius
         self.graphic = graphic
         
-    def update(self, elapsed_seconds, force = None):
+    def update(self, elapsed_seconds, force=None):
         if force is not None:
             self.velocity = vec.add(
                 self.velocity,

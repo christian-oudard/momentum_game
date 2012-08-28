@@ -9,19 +9,9 @@ import particle
 from particle import Particle
 import wall
 from wall import Wall
+import constants as c
 
 INPUT = InputManager.getInstance()
-
-# physics constants
-_drag_per_second = 0.15
-_drag_coefficient = math.log(1 - _drag_per_second)
-_initial_speed_seconds = 0.1
-_min_speed = 1.0
-_min_speed2 = _min_speed ** 2
-_max_speed = 40
-_max_speed2 = _max_speed ** 2
-_player_strength = 40.0
-_player_control = .4
 
 class Environment(Singleton):
     def __init__(self):
@@ -53,41 +43,18 @@ class Environment(Singleton):
             particle.collide_elastic(p1, p2)
         
         # Max speed, drag, and stop.
-        drag_multiplier = math.exp(_drag_coefficient * elapsed_seconds)
+        #TODO: move to particle class.
+        drag_multiplier = math.exp(c.drag_coefficient * elapsed_seconds)
         for p in self.particles:
             velocity2 = vec.mag2(p.velocity)
-            if velocity2 > _max_speed2:
-                p.velocity = vec.norm(p.velocity, _max_speed)
-            elif velocity2 < _min_speed2:
+            if velocity2 > c.max_speed2:
+                p.velocity = vec.norm(p.velocity, c.max_speed)
+            elif velocity2 < c.min_speed2:
                 p.velocity = (0,0)
             else:
                 p.velocity = vec.mul(p.velocity, drag_multiplier)
             
-        # Kludge, use the 0 element of the object list for the player.
-        player = self.obj_list[0]
-        player_force_input = (INPUT.x_axis, -INPUT.y_axis)
-        if player_force_input != (0, 0):
-            player_force_norm = vec.norm(player_force_input)
-        else:
-            player_force_norm = (0, 0)
-        player_force = vec.mul(player_force_norm, _player_strength)
-
-        player_force = vec.sub(
-            player_force,
-            vec.mul(player.velocity,  _player_control),
-        )
-        if vec.mag2(player.velocity) < _min_speed2:
-            player.velocity = vec.mul(
-                player_force_norm,
-                _min_speed * (1 + _drag_per_second * _initial_speed_seconds),
-            )
-            player.update(elapsed_seconds)
-        else:
-            player.update(elapsed_seconds, player_force)
-            
-        # Hackish update of all the other objects normally
-        #for obj in self.obj_list:
-        for obj in self.obj_list[1:]:
+        for obj in self.obj_list:
             obj.update(elapsed_seconds)
 
 def every_pair(iterable):
