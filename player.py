@@ -9,6 +9,23 @@ INPUT = InputManager.getInstance()
 def heading_to_vector(heading):
     return vec.rotate((1, 0), heading)
 
+def sign(n):
+    if n > 0:
+        return 1
+    elif n < 0:
+        return -1
+    else:
+        return 0
+
+def thrust_for_speed(speed):
+    for s, t in c.player_thrust_curve:
+        if not s or speed < s:
+            return t
+
+def braking_for_speed(speed):
+    for s, t in c.player_braking_curve:
+        if not s or speed < s:
+            return t
 
 class Player(Particle):
     def __init__(self, **kwargs):
@@ -21,6 +38,16 @@ class Player(Particle):
         # keys thrust forward and backward.
         self.heading += INPUT.x_axis * c.player_turn_rate_radians * elapsed_seconds
         self.direction = heading_to_vector(self.heading)
-        input_strength = INPUT.y_axis * c.player_strength
-        player_force = vec.mul(self.direction, input_strength)
+        # Determine the current speed in the direction we are facing.
+        # This can be negative.
+        speed = vec.dot(self.velocity, self.direction)
+        if sign(speed) == sign(INPUT.y_axis):
+            thrust = thrust_for_speed(abs(speed))
+        else:
+            thrust = braking_for_speed(abs(speed))
+
+        player_force = vec.mul(
+            self.direction,
+            INPUT.y_axis * thrust,
+        )
         super(Player, self).update(elapsed_seconds, player_force)

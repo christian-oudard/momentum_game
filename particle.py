@@ -4,6 +4,11 @@ import math
 import vec
 import constants as c
 
+def drag_for_speed(speed):
+    for s, d in c.drag_curve:
+        if not s or speed < s:
+            return d
+
 class Particle(object):
     def __init__(
         self,
@@ -25,7 +30,8 @@ class Particle(object):
         # Apply drag.
         # Decrease the magnitude of the velocity vector by
         # the amount of drag.
-        drag = drag_for_velocity(self.velocity) * elapsed_seconds
+        speed = vec.mag(self.velocity)
+        drag = drag_for_speed(speed) * elapsed_seconds
         if drag != 0 and self.velocity != (0, 0):
             drag_vector = vec.norm(self.velocity, -drag)
             self.velocity = vec.add(
@@ -34,12 +40,11 @@ class Particle(object):
             )
 
         # Limit to maximum speed.
-        speed2 = vec.mag2(self.velocity)
-        if speed2 > c.max_speed2:
-            self.velocity = vec.norm(self.velocity, c.max_speed)
-
         # Under minimum speed, stop completely.
-        elif speed2 < c.min_speed2:
+        speed = vec.mag(self.velocity)
+        if speed > c.max_speed:
+            self.velocity = vec.norm(self.velocity, c.max_speed)
+        elif speed < c.min_speed:
             # Don't clip under minimum speed if we are being forced.
             if force is None or force == (0, 0):
                 self.velocity = (0,0)
@@ -74,11 +79,6 @@ class Particle(object):
             if vec.mag2(v) < self.radius ** 2:
                 v = vec.norm(v, self.radius)
                 self.pos = vec.add(point, v)
-
-def drag_for_velocity(velocity):
-    for v, d in c.drag_curve:
-        if not v or velocity < v:
-            return d
 
 def intersect(p1, p2):
     distance2 = vec.mag2(vec.vfrom(p1.pos, p2.pos))

@@ -13,3 +13,10 @@ start with momentum like subspace / cosmic rift
 - player with direction
 - add hard steering like ecco the dolphin
 
+- maybe do separate braking versus thrusting curves?
+    maybe have to do an absolute value thing so we don't allow backing up really fast at high speeds?
+    cases:
+    - when stationary, easy to start quickly.
+    - when going fast forward, easy to stop, hard to go faster.
+    
+
