@@ -13,18 +13,15 @@ MAXFPS = 60
 SCREENSIZE = (800, 600)
 
 # handle #
-DISP = DisplayManager.getInstance()
-ENV = Environment.getInstance()
 INPUT = InputManager.getInstance()
 
 def main():
-
-    # init #
     pg.init()
     pg.font.init()
-    ENV.init()
-    DISP.init(SCREENSIZE)
     INPUT.init()
+
+    env = Environment()
+    disp = DisplayManager(env, SCREENSIZE)
 
     if SHOW_FPS:
         update_fps = pg.USEREVENT + 1
@@ -60,16 +57,16 @@ def main():
                 pass
             elif SHOW_FPS:
                 if e.type == update_fps:
-                    DISP.set_fps(clock.get_fps())
+                    disp.set_fps(clock.get_fps())
 
         # logic #
         INPUT.update()
         
         elapsedticks = clock.get_time()
-        ENV.update(elapsedticks)
+        env.update(elapsedticks)
         
         # draw #
-        DISP.draw()
+        disp.draw()
         
         # tick #
         clock.tick(MAXFPS)

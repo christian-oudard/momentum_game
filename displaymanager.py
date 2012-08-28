@@ -1,7 +1,6 @@
 import pygame as pg
 
 import vec
-from singletonmixin import Singleton
 from environment import Environment
 from inputmanager import InputManager
 from graphics import Graphics
@@ -17,19 +16,20 @@ FULLSCREEN = False
 BG_COLOR = (128,128,255)
 
 # handles #
-ENV = Environment.getInstance()
 INPUT = InputManager.getInstance()
 
-class DisplayManager(Singleton):
+class DisplayManager(object):
     """
     The display manager owns the pygame screen object, and the translation
     between world coordinates and screen coordinates. It also dispatches to the
     Graphics class to draw various kinds of objects.
-    """
-    def __init__(self):
-        pass
 
-    def init(self, screen_size):
+    Architecturally, the display manager looks at the environment, and shows it
+    as it chooses, rather than having the environment tell the display manager
+    how to show its various pieces.
+    """
+    def __init__(self, environment, screen_size):
+        self.environment = environment
         self.screen_size = screen_size
         self.pixels_per_unit = 20
         flags = pg.HWSURFACE | pg.DOUBLEBUF
@@ -52,9 +52,9 @@ class DisplayManager(Singleton):
     def draw(self):
         self.screen.fill(BG_COLOR)
 
-        for p in ENV.particles:
+        for p in self.environment.particles:
             self.graphics.draw_particle(p)
-        for w in ENV.walls:
+        for w in self.environment.walls:
             self.graphics.draw_wall(w)
 
         for widget in self.widgets:

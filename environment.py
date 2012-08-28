@@ -6,20 +6,13 @@ import math
 from pygame import Rect
 
 import vec
-from singletonmixin import Singleton
-from inputmanager import InputManager
 from particle import Particle, collide_elastic
 from player import Player
 from wall import Wall
 import constants as c
 
-INPUT = InputManager.getInstance()
-
-class Environment(Singleton):
+class Environment(object):
     def __init__(self):
-        pass # singleton
-        
-    def init(self):
         self.particles = []
         self.walls = []
 

@@ -1,5 +1,5 @@
 TODO
-- remove singleton BS
+- remove singleton BS. we need to erect a correct flow of information between the various pieces for this though. global singletons are a very lazy and tangled way to avoid the issue.
 - rename particle to entity or something
 - fix extreme speed allowing particles to pass through walls.
 - fix wall endpoints piercing through particles. to happen, it must be moving
