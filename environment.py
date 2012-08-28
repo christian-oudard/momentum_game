@@ -6,7 +6,7 @@ import math
 from pygame import Rect
 
 import vec
-from particle import Particle, collide_elastic
+from particle import Particle, collide_particles
 from player import Player
 from wall import Wall
 import constants as c
@@ -48,11 +48,11 @@ class Environment(object):
         # Wall-particle collisions.
         for w in self.walls:
             for p in self.particles:
-                w.collide_wall(p)
+                w.collide_wall(p, c.restitution_wall)
                     
         # Particle collisions.
         for (p1, p2) in every_pair(self.particles):
-            collide_elastic(p1, p2)
+            collide_particles(p1, p2, c.restitution_particle)
             
         for o in self.particles:
             o.update(elapsed_seconds)
