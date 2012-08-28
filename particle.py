@@ -3,85 +3,110 @@
 
 from __future__ import division
 import math
-from vector import Point2dFloat, Vector2dFloat
+
+import vec
 
 class Particle(object):
-    def __init__(self, **kwds):
-        try:
-            self.pos = Point2dFloat(kwds['pos'])
-        except KeyError:
-            self.pos = Point2dFloat(0,0)
-        try:
-            self.velocity = Vector2dFloat(kwds['velocity'])
-        except KeyError:
-            self.velocity = Vector2dFloat(0,0)
-        try:
-            self.mass = float(kwds['mass'])
-        except KeyError:
-            self.mass = 1.0
-        try:
-            self.radius = float(kwds['radius'])
-        except KeyError:
-            self.radius = math.sqrt(self.mass)
-            
-        self.graphic = kwds['graphic'] ##TEMP
+    def __init__(
+        self,
+        pos=(0, 0),
+        velocity=(0, 0),
+        mass=1.0,
+        radius=None,
+        graphic=None,
+    ):
+        self.pos = pos
+        self.velocity = velocity
+        self.mass = mass
+        if radius is None:
+            radius = math.sqrt(self.mass)
+        self.radius = radius
+        self.graphic = graphic
         
     def update(self, elapsed_seconds, force = None):
         if force is not None:
-            self.velocity += force * (elapsed_seconds/self.mass)
-        self.pos = self.pos + (self.velocity * (elapsed_seconds))
+            self.velocity = vec.add(
+                self.velocity,
+                vec.mul(force, (elapsed_seconds / self.mass)),
+            )
+        self.pos = vec.add(
+            self.pos,
+            vec.mul(self.velocity, elapsed_seconds),
+        )
 
     def rebound(self, normal, point=None, restitution=1):
-        if type(normal) != Vector2dFloat:
-            normal = Vector2dFloat(normal)
-        # split into normal and tangential components
-        tangent = normal.perp()
-        v_tangent = self.velocity.project(tangent)
-        v_normal = self.velocity.project(normal)
-        # invert normal component
-        self.velocity = v_tangent + v_normal.reverse() * restitution
-        
+        # Split into normal and tangential components.
+        tangent = vec.perp(normal)
+        v_tangent = vec.proj(self.velocity, tangent)
+        v_normal = vec.proj(self.velocity, normal)
+        # Invert normal component and recombine, with restitution.
+        v_normal = vec.neg(v_normal)
+        self.velocity = vec.add(
+            v_tangent,
+            vec.mul(v_normal, restitution),
+        )
+        # If the particle is partially inside the wall, move it out.
         if point is not None:
-            v = Vector2dFloat(self.pos - point)
-            if v.mag2 < self.radius ** 2: # if point is too close
-                v.mag = self.radius
-                self.pos = point + v
+            v = vec.vfrom(point, self.pos)
+            if vec.mag2(v) < self.radius ** 2:
+                v = vec.norm(v, self.radius)
+                self.pos = vec.add(point, v)
 
 def intersect(p1, p2):
-    return Vector2dFloat(p1.pos - p2.pos).mag2 <= (p1.radius + p2.radius)**2
+    distance2 = vec.mag2(vec.vfrom(p1.pos, p2.pos))
+    return distance2 <= (p1.radius + p2.radius)**2
     
 def collide_elastic(p1, p2, restitution = 1):
-    # test if p1 and p2 collide, then bounce them
+    # Test if p1 and p2 are actually intersecting.
     if not intersect(p1, p2):
         return
+
+    # Vector spanning between the centers, normal to contact surface.
+    v_span = vec.vfrom(p1.pos, p2.pos)
+    
+    # Split into normal and tangential components.
+    normal = vec.norm(v_span)
+    tangent = vec.perp(normal)
+    v1_tangent = vec.proj(p1.velocity, tangent)
+    v2_tangent = vec.proj(p2.velocity, tangent)
+
+    # Calculate initial velocities.
+    p1_initial = vec.dot(p1.velocity, normal)
+    p2_initial = vec.dot(p2.velocity, normal)
+
+    # Don't collide if particles were actually moving away from each other, so
+    # they don't get stuck inside one another.
+    if p1_initial - p2_initial < 0:
+        return
+    
+    # Elastic collision equations along normal component.
     m1, m2 = p1.mass, p2.mass
-    m1plusm2 = (m1 + m2)/restitution
-    v_span = Vector2dFloat(p2.pos - p1.pos) # vector from p1 to p2, normal to contact surface
+    m1plusm2 = (m1 + m2) / restitution
+    p1_final = (
+        p1_initial * (m1 - m2) / m1plusm2 + 
+        p2_initial * (2 * m2) / m1plusm2
+    )
+    p2_final = (
+        p2_initial * (m2 - m1) / m1plusm2 + 
+        p1_initial * (2 * m1) / m1plusm2
+    )
     
-    # split into normal and tangential components
-    tangent = v_span.perp()
-    v1tangent = p1.velocity.project(tangent)
-    v2tangent = p2.velocity.project(tangent)
-    v1i = p1.velocity.component(v_span)
-    v2i = p2.velocity.component(v_span)
-    if v1i <= v2i: # if particles were actually moving away from each other
-        return # don't collide
+    #print 'restitution = %.12f' % (-(p1_final-p2_final)/(p1_initial-p2_initial)) # debug
     
-    # elastic collision equations along normal component
-    v1f = ((m1 - m2)/(m1plusm2))*v1i + ((2*m2)/(m1plusm2))*v2i
-    v2f = ((2*m1)/(m1plusm2))*v1i + ((m2 - m1)/(m1plusm2))*v2i
-    
-    #print 'restitution = %.12f' % (-(v1f-v2f)/(v1i-v2i)) # debug
-    
-    # tangential component is unchanged, recombine
-    unit_normal = v_span.dir
-    p1.velocity = unit_normal * v1f + v1tangent
-    p2.velocity = unit_normal * v2f + v2tangent
-    
-    # adjust faster particle not to clip inside slower one
-    v_span.mag = p1.radius + p2.radius
-    if p1.velocity.mag2 >= p2.velocity.mag2:
-        p1.pos = p2.pos - v_span
+    # Tangential component is unchanged, recombine.
+    p1.velocity = vec.add(
+        v1_tangent,
+        vec.mul(normal, p1_final),
+    )
+    p2.velocity = vec.add(
+        v2_tangent,
+        vec.mul(normal, p2_final),
+    )
+
+    # Adjust faster particle not to clip inside slower one.
+    v_span = vec.norm(v_span, p1.radius + p2.radius)
+    if vec.mag2(p1.velocity) >= vec.mag2(p2.velocity):
+        p1.pos = vec.sub(p2.pos, v_span)
     else:
-        p2.pos = p1.pos + v_span
+        p2.pos = vec.add(p1.pos, v_span)
     

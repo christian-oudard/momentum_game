@@ -1,49 +1,49 @@
-from vector import Point2dFloat, Vector2dFloat
+import vec
 
 class Wall(object):
-    def __init__(self, p1, p2, **kwds):
-        self.p1 = Point2dFloat(p1)
-        self.p2 = Point2dFloat(p2)
-        self.tangent = Vector2dFloat(self.p2 - self.p1) # vector from p1 to p2
-        self.normal = self.tangent.perp()
+    def __init__(self, p1, p2, graphic=None):
+        self.p1 = p1
+        self.p2 = p2
+        self.tangent = vec.vfrom(self.p1, self.p2)
+        self.normal = vec.perp(self.tangent)
         
-        self.graphic = kwds['graphic'] ##TEMP
+        self.graphic = graphic
         
     def update(self, elapsedticks):
         pass
         
     def collide_wall(self, p, restitution = 1):        
-        v1 = Vector2dFloat(p.pos - self.p1) # vector from p1 to p
-        v_dist = v1.project(self.normal) # perp vector from wall to p
-        rad2 = p.radius**2
-        
-        # test distance from the wall
-        if v_dist.mag2 > rad2:
-            return
-        
-        v2 = Vector2dFloat(p.pos - self.p2) # vector from p2 to p
+        # Find vectors to each endpoint of the segment.
+        v1 = vec.vfrom(self.p1, p.pos)
+        v2 = vec.vfrom(self.p2, p.pos)
 
-        # test whether p is too far off the end of the segment
-        if v1.component(self.tangent) < 0:
-            if v1.mag2 > rad2:
-                return
-            else:
-                if p.velocity.component(v1) > 0: # must be headed toward
-                    return
-                p.rebound(v1, self.p1, restitution)
-                return
-        if v2.component(self.tangent) > 0:
-            if v2.mag2 > rad2:
-                return
-            else:
-                if p.velocity.component(v2) > 0: # must be headed toward
-                    return
-                else:
-                    p.rebound(v2, self.p2, restitution)
-                    return    
-        
-        # test that p is headed toward the wall
-        if p.velocity.component(v_dist) > 0:
+        # Find a perpendicular vector from the wall to p.
+        v_dist = vec.proj(v1, self.normal)
+
+        # Test that p is headed toward the wall.
+        if vec.dot(p.velocity, v_dist) > 0:
             return
-        else:
-            p.rebound(self.normal, p.pos - v_dist, restitution)
+        
+        # Test distance from the wall.
+        radius2 = p.radius**2
+        if vec.mag2(v_dist) > radius2:
+            return
+        
+        # Test for collision with the endpoints of the segment.
+        # Check whether p is too far off the end of the segment, by checking
+        # the sign of the vector projection, then a radius check for the
+        # distance from the endpoint.
+        if vec.dot(v1, self.tangent) < 0:
+            if vec.mag2(v1) > radius2:
+                return
+            p.rebound(v1, self.p1, restitution)
+            return
+        if vec.dot(v2, self.tangent) > 0:
+            if vec.mag2(v2) > radius2:
+                return
+            p.rebound(v2, self.p2, restitution)
+            return    
+
+        # We are definitely not off the ends of the segment, and close enough
+        # that we are colliding.
+        p.rebound(self.normal, vec.sub(p.pos, v_dist), restitution)

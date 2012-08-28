@@ -12,7 +12,9 @@ class Graphic(object):
         pass
 
     def draw(self, obj):
-        pygame.draw.circle(DISP.screen, 
-                           PARTICLE_COLOR,
-                           DISP.to_screen(obj.pos),
-                           int(obj.radius * DISP.pixels_per_unit))
+        pygame.draw.circle(
+            DISP.screen, 
+            PARTICLE_COLOR,
+            DISP.to_screen(obj.pos),
+            int(obj.radius * DISP.pixels_per_unit),
+        )

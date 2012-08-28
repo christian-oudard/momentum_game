@@ -6,7 +6,6 @@ from environment import Environment
 from inputmanager import InputManager
 
 ## TEMP
-from vector import Vector2dFloat
 from particle import Particle
 from wall import Wall
 from graphic import Graphic
@@ -42,7 +41,7 @@ def main():
     g = Graphic()
     wg = WallGraphic()
     
-    player = Particle(pos=(2,2),velocity=(0,0), mass=.5, graphic=g)
+    player = Particle(pos=(2,2),velocity=(0,0), mass=1.5, graphic=g)
     ENV.add_obj(player)
     
     ENV.add_obj(Particle(pos=(0,3),velocity=(-1,3), mass=1, graphic=g))

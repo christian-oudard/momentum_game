@@ -1,7 +1,7 @@
 import pygame as p
 
+import vec
 from singletonmixin import Singleton
-from vector import Coord, Point2dFloat
 from environment import Environment
 from inputmanager import InputManager
 
@@ -24,14 +24,14 @@ class DisplayManager(Singleton):
         pass
 
     def init(self, screen_size):
-        self.screen_size = Coord(screen_size)
+        self.screen_size = screen_size
         self.pixels_per_unit = 20
         flags = p.HWSURFACE | p.DOUBLEBUF
         if FULLSCREEN:
             flags |= p.FULLSCREEN
         self.screen = p.display.set_mode(tuple(self.screen_size), flags)
 
-        self.screen_origin = self.screen_size / 2
+        self.screen_origin = vec.div(self.screen_size, 2)
         
         self.widgets = []
 
@@ -56,12 +56,14 @@ class DisplayManager(Singleton):
     def to_screen(self, pos):
         """Convert pos to screen coordinates.
         
-        Takes a Point2dFloat (or equivalent) representing a position,
-        and returns a Coord for the screen position
+        Takes a tuple a world position, and returns a tuple for the
+        screen position.
         """
-        if type(pos) != Point2dFloat:
-            pos = Point2dFloat(pos)
-        return self.screen_origin + pos * self.pixels_per_unit
+        x, y = vec.add(
+            self.screen_origin,
+            vec.mul(pos, self.pixels_per_unit),
+        )
+        return (int(x), int(y))
 
     def set_fps(self, fps):
         self.fps = fps
@@ -79,7 +81,8 @@ class FPSWidget(object):
             True,
             self.color,
         )
-        x = self.display.screen_size.x - surface.get_width() - 10
+        width, height = self.display.screen_size
+        x = width - surface.get_width() - 10
         y = 10
         screen.blit(surface, (x, y))
 
@@ -94,10 +97,16 @@ class JoystickWidget(object):
         self.surface.fill((0,0,0,0))
         p.draw.line(self.surface, (128,255,128), (14-10,14), (14+10,14), 2)
         p.draw.line(self.surface, (128,255,128), (14,14-10), (14,15+10), 2)
-        joypos = Coord(INPUT.x_axis, -INPUT.y_axis) * 8
-        p.draw.circle(self.surface, (196,64,64), tuple(joypos + (15,15)), 4)
+        joypos = vec.mul((INPUT.x_axis, -INPUT.y_axis), 8)
+        p.draw.circle(
+            self.surface,
+            (196,64,64),
+            vec.add(joypos, (15,15)),
+            4,
+        )
         self.surface.unlock()
 
+        width, height = self.display.screen_size
         x = 10
-        y = self.display.screen_size.y - self.surface.get_height() - 10
+        y = height - self.surface.get_height() - 10
         screen.blit(self.surface, (x, y))

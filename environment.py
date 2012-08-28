@@ -1,18 +1,16 @@
 from __future__ import division
 import math
-from singletonmixin import Singleton
 from pygame import Rect
+
+import vec
+from singletonmixin import Singleton
 from inputmanager import InputManager
-from vector import Vector2dFloat
 import particle
 from particle import Particle
 import wall
 from wall import Wall
 
 INPUT = InputManager.getInstance()
-
-# constants #
-_origin = Vector2dFloat(0,0)
 
 # physics constants
 _drag_per_second = 0.15
@@ -22,7 +20,7 @@ _min_speed = 1.0
 _min_speed2 = _min_speed ** 2
 _max_speed = 40
 _max_speed2 = _max_speed ** 2
-_player_strength = 10.0
+_player_strength = 40.0
 _player_control = .4
 
 class Environment(Singleton):
@@ -44,40 +42,53 @@ class Environment(Singleton):
     def update(self, elapsed_ticks):
         elapsed_seconds = elapsed_ticks/1000
         
-        # wall-particle collisions #
+        # Wall-particle collisions.
         for w in self.walls:
             for p in self.particles:
                 w.collide_wall(p)
                     
-        # particle collisions #
+        # Particle collisions.
+        #TODO: Use an algorithm faster than O(n**2).
         for (p1, p2) in every_pair(self.particles):
             particle.collide_elastic(p1, p2)
         
-        # max speed, drag, and stop #
+        # Max speed, drag, and stop.
         drag_multiplier = math.exp(_drag_coefficient * elapsed_seconds)
         for p in self.particles:
-            velo2 = p.velocity.mag2
-            if velo2 > _max_speed2:
-                p.velocity.mag = _max_speed
-            elif velo2 < _min_speed2:
-                p.velocity = Vector2dFloat(0,0)
+            velocity2 = vec.mag2(p.velocity)
+            if velocity2 > _max_speed2:
+                p.velocity = vec.norm(p.velocity, _max_speed)
+            elif velocity2 < _min_speed2:
+                p.velocity = (0,0)
             else:
-                p.velocity = drag_multiplier * p.velocity
+                p.velocity = vec.mul(p.velocity, drag_multiplier)
             
-##        for obj in self.obj_list:
-##            obj.update(elapsedticks)
-
-        ##TEMP
-        player_force = Vector2dFloat(INPUT.x_axis, -INPUT.y_axis).dir * _player_strength
-        player_force -= self.obj_list[0].velocity * _player_control
-        if self.obj_list[0].velocity.mag2 < _min_speed2:
-            self.obj_list[0].velocity = player_force.dir * (_min_speed * (1 + _drag_per_second * _initial_speed_seconds))
-            self.obj_list[0].update(elapsed_seconds)
+        # Kludge, use the 0 element of the object list for the player.
+        player = self.obj_list[0]
+        player_force_input = (INPUT.x_axis, -INPUT.y_axis)
+        if player_force_input != (0, 0):
+            player_force_norm = vec.norm(player_force_input)
         else:
-            self.obj_list[0].update(elapsed_seconds, player_force)
+            player_force_norm = (0, 0)
+        player_force = vec.mul(player_force_norm, _player_strength)
+
+        player_force = vec.sub(
+            player_force,
+            vec.mul(player.velocity,  _player_control),
+        )
+        if vec.mag2(player.velocity) < _min_speed2:
+            player.velocity = vec.mul(
+                player_force_norm,
+                _min_speed * (1 + _drag_per_second * _initial_speed_seconds),
+            )
+            player.update(elapsed_seconds)
+        else:
+            player.update(elapsed_seconds, player_force)
+            
+        # Hackish update of all the other objects normally
+        #for obj in self.obj_list:
         for obj in self.obj_list[1:]:
             obj.update(elapsed_seconds)
-        ##
 
 def every_pair(iterable):
     """An iterator through every pair in iterable
