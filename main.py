@@ -1,17 +1,9 @@
 from __future__ import division
-import pygame as p
+import pygame as pg
 from singletonmixin import SingletonException
 from displaymanager import DisplayManager
 from environment import Environment
 from inputmanager import InputManager
-
-## TEMP
-from particle import Particle
-from player import Player
-from wall import Wall
-from graphic import Graphic
-from wallgraphic import WallGraphic
-##
 
 # debug switches #
 SHOW_FPS = True
@@ -28,61 +20,43 @@ INPUT = InputManager.getInstance()
 def main():
 
     # init #
-    p.init()
-    p.font.init()
+    pg.init()
+    pg.font.init()
     ENV.init()
     DISP.init(SCREENSIZE)
     INPUT.init()
 
     if SHOW_FPS:
-        update_fps = p.USEREVENT + 1
-        p.time.set_timer(update_fps, 700)
-
-    ##TEMP, set up level
-    g = Graphic()
-    wg = WallGraphic()
-    
-    player = Player(pos=(2,2),velocity=(0,0), mass=1.5, graphic=g)
-    ENV.add_obj(player)
-    
-    ENV.add_obj(Particle(pos=(0,3),velocity=(-1,3), mass=1, graphic=g))
-    ENV.add_obj(Particle(pos=(-5,0),velocity=(-1,2), mass=.25, graphic=g))
-    ENV.add_obj(Particle(pos=(3,-3),velocity=(0,-3), mass=3, graphic=g))
-         
-    ENV.add_obj(Wall((0,10),(-10,3),graphic=wg))
-    ENV.add_obj(Wall((-10,3),(2,-11),graphic=wg))
-    ENV.add_obj(Wall((2,-11),(13,0),graphic=wg))
-    ENV.add_obj(Wall((13,0),(0,10),graphic=wg))
-    ENV.add_obj(Wall((-3,0),(3,0),graphic=wg))
-    ##
+        update_fps = pg.USEREVENT + 1
+        pg.time.set_timer(update_fps, 700)
     
     # vars #
     done = False
-    clock = p.time.Clock()
+    clock = pg.time.Clock()
     clock.tick()  # necessary, or the first tick will be very large
     
     # program loop #
     while not done:
         # events #
-        for e in p.event.get():
-            if e.type == p.QUIT: done = True
-            elif e.type == p.KEYDOWN:
+        for e in pg.event.get():
+            if e.type == pg.QUIT: done = True
+            elif e.type == pg.KEYDOWN:
                 key = e.key
-                if key == p.K_ESCAPE:
-                    p.event.post(p.event.Event(p.QUIT))
-                elif key == p.K_UP:
+                if key == pg.K_ESCAPE:
+                    pg.event.post(pg.event.Event(pg.QUIT))
+                elif key == pg.K_UP:
                     INPUT.up_last = True
-                elif key == p.K_DOWN:
+                elif key == pg.K_DOWN:
                     INPUT.up_last = False
-                elif key == p.K_RIGHT:
+                elif key == pg.K_RIGHT:
                     INPUT.right_last = True
-                elif key == p.K_LEFT:
+                elif key == pg.K_LEFT:
                     INPUT.right_last = False
-            elif e.type == p.MOUSEMOTION:
+            elif e.type == pg.MOUSEMOTION:
                 pass
-            elif e.type == p.MOUSEBUTTONDOWN:
+            elif e.type == pg.MOUSEBUTTONDOWN:
                 pass
-            elif e.type == p.MOUSEBUTTONUP:
+            elif e.type == pg.MOUSEBUTTONUP:
                 pass
             elif SHOW_FPS:
                 if e.type == update_fps:
@@ -102,7 +76,7 @@ def main():
         
     # end program loop #
 
-    p.quit()
+    pg.quit()
     
 if __name__ == '__main__':
     main()

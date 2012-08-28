@@ -1,5 +1,10 @@
 TODO
 - remove singleton BS
+- rename particle to entity or something
+- fix extreme speed allowing particles to pass through walls.
+- fix wall endpoints piercing through particles. to happen, it must be moving
+  diagonally toward the point, but with the center moving away from the line of
+  the wall.
 
 x joystick which handles left/right stacking properly
 

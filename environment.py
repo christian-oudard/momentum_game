@@ -1,13 +1,15 @@
 from __future__ import division
+
+import itertools
 import math
+
 from pygame import Rect
 
 import vec
 from singletonmixin import Singleton
 from inputmanager import InputManager
-import particle
-from particle import Particle
-import wall
+from particle import Particle, collide_elastic
+from player import Player
 from wall import Wall
 import constants as c
 
@@ -18,19 +20,34 @@ class Environment(Singleton):
         pass # singleton
         
     def init(self):
-        self.obj_list = []
         self.particles = []
         self.walls = []
-        
-    def add_obj(self, obj):
-        self.obj_list.append(obj)
-        if isinstance(obj, Particle):
-            self.particles.append(obj)
-        elif isinstance(obj, Wall):
-            self.walls.append(obj)
+
+        ##TEMP, set up level
+        self.add_objects([
+            Player(pos=(2,2),velocity=(0,0), mass=1.5),
+            Particle(pos=(0,3),velocity=(-1,3), mass=1),
+            Particle(pos=(-5,0),velocity=(-1,2), mass=.25),
+            Particle(pos=(3,-3),velocity=(0,-3), mass=3),
+            Wall((0,10),(-10,3)),
+            Wall((-10,3),(2,-11)),
+            Wall((2,-11),(13,0)),
+            Wall((13,0),(0,10)),
+            Wall((-3,0),(3,0)),
+        ])
+        ##
+
+    def add_objects(self, objects):
+        for o in objects:
+            if isinstance(o, Particle):
+                self.particles.append(o)
+            elif isinstance(o, Wall):
+                self.walls.append(o)
     
     def update(self, elapsed_ticks):
         elapsed_seconds = elapsed_ticks/1000
+        
+        #TODO: Use collision algorithms faster than O(n**2).
         
         # Wall-particle collisions.
         for w in self.walls:
@@ -38,12 +55,11 @@ class Environment(Singleton):
                 w.collide_wall(p)
                     
         # Particle collisions.
-        #TODO: Use an algorithm faster than O(n**2).
         for (p1, p2) in every_pair(self.particles):
-            particle.collide_elastic(p1, p2)
+            collide_elastic(p1, p2)
             
-        for obj in self.obj_list:
-            obj.update(elapsed_seconds)
+        for o in self.particles:
+            o.update(elapsed_seconds)
 
 def every_pair(iterable):
     """An iterator through every pair in iterable
