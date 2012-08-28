@@ -22,23 +22,35 @@ class Particle(object):
         self.graphic = graphic
         
     def update(self, elapsed_seconds, force=None):
-        # Max speed, drag, and stop.
-        velocity2 = vec.mag2(self.velocity)
-        if velocity2 > c.max_speed2:
+        # Apply drag.
+        # Decrease the magnitude of the velocity vector by
+        # the amount of drag.
+        drag = drag_for_velocity(self.velocity) * elapsed_seconds
+        if drag != 0 and self.velocity != (0, 0):
+            drag_vector = vec.norm(self.velocity, -drag)
+            self.velocity = vec.add(
+                self.velocity,
+                drag_vector,
+            )
+
+        # Limit to maximum speed.
+        speed2 = vec.mag2(self.velocity)
+        if speed2 > c.max_speed2:
             self.velocity = vec.norm(self.velocity, c.max_speed)
-        elif velocity2 < c.min_speed2:
+
+        # Under minimum speed, stop completely.
+        elif speed2 < c.min_speed2:
             # Don't clip under minimum speed if we are being forced.
             if force is None or force == (0, 0):
                 self.velocity = (0,0)
-        else:
-            drag_multiplier = math.exp(c.drag_coefficient * elapsed_seconds)
-            self.velocity = vec.mul(self.velocity, drag_multiplier)
+
         # Apply force if necessary.
         if force is not None:
             self.velocity = vec.add(
                 self.velocity,
                 vec.mul(force, (elapsed_seconds / self.mass)),
             )
+
         # Update position based on velocity.
         self.pos = vec.add(
             self.pos,
@@ -62,6 +74,11 @@ class Particle(object):
             if vec.mag2(v) < self.radius ** 2:
                 v = vec.norm(v, self.radius)
                 self.pos = vec.add(point, v)
+
+def drag_for_velocity(velocity):
+    for v, d in c.drag_curve:
+        if not v or velocity < v:
+            return d
 
 def intersect(p1, p2):
     distance2 = vec.mag2(vec.vfrom(p1.pos, p2.pos))
@@ -101,8 +118,9 @@ def collide_particles(p1, p2, restitution = 1):
         p2_initial * (m2 - m1) / m1plusm2 + 
         p1_initial * (2 * m1) / m1plusm2
     )
-    
-    #print 'restitution = %.12f' % (-(p1_final-p2_final)/(p1_initial-p2_initial)) # debug
+
+    #DEBUG: check that restitution works out to the same value.
+    #print 'restitution = %.12f' % (-(p1_final-p2_final)/(p1_initial-p2_initial))
     
     # Tangential component is unchanged, recombine.
     p1.velocity = vec.add(
@@ -120,4 +138,3 @@ def collide_particles(p1, p2, restitution = 1):
         p1.pos = vec.sub(p2.pos, v_span)
     else:
         p2.pos = vec.add(p1.pos, v_span)
-    
