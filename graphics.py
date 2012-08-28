@@ -1,8 +1,8 @@
 import pygame as pg
 
 # Colors.
-PARTICLE_COLOR = (128, 64, 64)
-WALL_COLOR = (64, 128, 64)
+PARTICLE_COLOR = (128, 32, 64)
+WALL_COLOR = (32, 32, 32)
 
 class Graphics(object):
     def __init__(self, display):
@@ -22,5 +22,5 @@ class Graphics(object):
             WALL_COLOR,
             self.display.to_screen(wall.p1),
             self.display.to_screen(wall.p2),
-            1, # width
+            3, # width
         )

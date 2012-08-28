@@ -22,11 +22,14 @@ class Environment(object):
             Particle(pos=(0,3),velocity=(-1,3), mass=1),
             Particle(pos=(-5,0),velocity=(-1,2), mass=.25),
             Particle(pos=(3,-3),velocity=(0,-3), mass=3),
-            Wall((0,10),(-10,3)),
-            Wall((-10,3),(2,-11)),
-            Wall((2,-11),(13,0)),
-            Wall((13,0),(0,10)),
-            Wall((-3,0),(3,0)),
+            Wall((-3,0), (3,0)),
+            Wall((0,8), (-15,12)),
+            Wall((-15,12), (-12,-7)),
+            Wall((-12,-7), (2,-11)),
+            Wall((2,-11), (14,-10)),
+            Wall((14,-10), (17,2)),
+            Wall((17,2), (15,13)),
+            Wall((15,13), (0,8)),
         ])
         ##
 
