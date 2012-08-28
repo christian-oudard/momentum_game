@@ -56,7 +56,6 @@ def main():
     ENV.add_obj(Wall((-3,0),(3,0),graphic=wg))
     ##
     
-    
     # vars #
     done = False
     clock = p.time.Clock()

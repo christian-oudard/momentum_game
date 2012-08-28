@@ -2,6 +2,7 @@ from __future__ import division
 import math
 
 import vec
+import constants as c
 
 class Particle(object):
     def __init__(
@@ -21,6 +22,16 @@ class Particle(object):
         self.graphic = graphic
         
     def update(self, elapsed_seconds, force=None):
+        # Max speed, drag, and stop.
+        velocity2 = vec.mag2(self.velocity)
+        if velocity2 > c.max_speed2:
+            self.velocity = vec.norm(self.velocity, c.max_speed)
+        elif velocity2 < c.min_speed2:
+            self.velocity = (0,0)
+        else:
+            drag_multiplier = math.exp(c.drag_coefficient * elapsed_seconds)
+            self.velocity = vec.mul(self.velocity, drag_multiplier)
+
         if force is not None:
             self.velocity = vec.add(
                 self.velocity,
