@@ -1,9 +1,9 @@
 TODO
 player physics
-- can exceed normal straight speed curve by turning to the side a bit. 
+2 - rudder effect for steering
 
 code
-- have a real dispatch instead of isinstance BS
+1 - have a real dispatch instead of isinstance BS
 - remove singleton BS. we need to erect a correct flow of information between the various pieces for this though. global singletons are a very lazy and tangled way to avoid the issue.
 - rename particle to entity or something
 
@@ -12,19 +12,3 @@ bugs
 - fix wall endpoints piercing through particles. to happen, it must be moving
   diagonally toward the point, but with the center moving away from the line of
   the wall.
-
-x joystick which handles left/right stacking properly
-
-
-start with momentum like subspace / cosmic rift
-
-- player with direction
-- add hard steering like ecco the dolphin
-
-- maybe do separate braking versus thrusting curves?
-    maybe have to do an absolute value thing so we don't allow backing up really fast at high speeds?
-    cases:
-    - when stationary, easy to start quickly.
-    - when going fast forward, easy to stop, hard to go faster.
-    
-
