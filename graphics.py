@@ -4,6 +4,7 @@ import vec
 # Colors.
 PARTICLE_COLOR = (128, 32, 64)
 WALL_COLOR = (32, 32, 32)
+DIRECTION_COLOR = (255, 255, 255)
 
 class Graphics(object):
     def __init__(self, display):
@@ -30,7 +31,7 @@ class Graphics(object):
             leading_point = player.pos
         pg.draw.line(
             self.display.screen,
-            WALL_COLOR,
+            DIRECTION_COLOR,
             self.display.to_screen(player.pos),
             self.display.to_screen(leading_point),
             3, # width

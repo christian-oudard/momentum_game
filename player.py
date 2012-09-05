@@ -9,22 +9,9 @@ INPUT = InputManager.getInstance()
 def heading_to_vector(heading):
     return vec.rotate((1, 0), heading)
 
-def sign(n):
-    if n > 0:
-        return 1
-    elif n < 0:
-        return -1
-    else:
-        return 0
-
 def thrust_for_speed(speed):
     for s, t in c.player_thrust_curve:
-        if not s or speed < s:
-            return t
-
-def braking_for_speed(speed):
-    for s, t in c.player_braking_curve:
-        if not s or speed < s:
+        if s is None or speed < s:
             return t
 
 class Player(Particle):
@@ -34,20 +21,23 @@ class Player(Particle):
         super(Player, self).__init__(**kwargs)
 
     def update(self, elapsed_seconds):
-        # The left and right keys turn the player, and the up and down
-        # keys thrust forward and backward.
+        # Handle turning. The left and right keys turn the player.
         self.heading += INPUT.x_axis * c.player_turn_rate_radians * elapsed_seconds
         self.direction = heading_to_vector(self.heading)
-        # Determine the current speed in the direction we are facing.
-        # This can be negative.
-        speed = vec.dot(self.velocity, self.direction)
-        if sign(speed) == sign(INPUT.y_axis):
-            thrust = thrust_for_speed(abs(speed))
-        else:
-            thrust = braking_for_speed(abs(speed))
 
-        player_force = vec.mul(
-            self.direction,
-            INPUT.y_axis * thrust,
-        )
+        # The up key thrusts, and the down key brakes.
+        player_force = (0, 0)
+        if INPUT.y_axis == +1:
+            # Handle thrust. Add momentum in the direction we are facing.
+            # We vary the thrust depending on how fast the player is already
+            # traveling in the direction it is facing.
+            speed = vec.dot(self.velocity, self.direction)
+            thrust = thrust_for_speed(speed)
+            player_force = vec.mul(self.direction, thrust)
+        elif INPUT.y_axis == -1:
+            # Handle braking.
+            # Always oppose the current velocity.
+            if vec.mag(self.velocity) >= c.player_minimum_brake_speed:
+                player_force = vec.norm(self.velocity, -c.player_braking_strength)
+
         super(Player, self).update(elapsed_seconds, player_force)

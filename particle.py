@@ -32,7 +32,9 @@ class Particle(object):
         # the amount of drag.
         speed = vec.mag(self.velocity)
         drag = drag_for_speed(speed) * elapsed_seconds
-        if drag != 0 and self.velocity != (0, 0):
+        if drag > speed:
+            self.velocity = (0, 0)
+        elif drag != 0 and self.velocity != (0, 0):
             drag_vector = vec.norm(self.velocity, -drag)
             self.velocity = vec.add(
                 self.velocity,

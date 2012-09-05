@@ -18,7 +18,7 @@ class Environment(object):
 
         ##TEMP, set up level
         self.add_objects([
-            Player(pos=(2,2),velocity=(0,0), mass=1.5),
+            Player(pos=(2,2),velocity=(0,0), mass=1.5, radius = 1.0),
             Particle(pos=(0,3),velocity=(-1,3), mass=1),
             Particle(pos=(-5,0),velocity=(-1,2), mass=.25),
             Particle(pos=(3,-3),velocity=(0,-3), mass=3),
