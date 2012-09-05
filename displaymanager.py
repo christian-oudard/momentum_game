@@ -7,7 +7,7 @@ from graphics import Graphics
 
 # debug switches #
 SHOW_JOYSTICK = True
-SHOW_FPS = True
+SHOW_INFO = True
 
 # constants #
 FULLSCREEN = False
@@ -43,9 +43,9 @@ class DisplayManager(object):
 
         if SHOW_JOYSTICK:
             self.widgets.append(JoystickWidget(self))
-        if SHOW_FPS:
+        if SHOW_INFO:
             self.fps = 0.0
-            self.widgets.append(FPSWidget(self))
+            self.widgets.append(InfoWidget(self))
 
         self.graphics = Graphics(self)
 
@@ -82,24 +82,33 @@ class DisplayManager(object):
         self.fps = fps
 
 
-class FPSWidget(object):
+class InfoWidget(object):
     def __init__(self, display):
         self.display = display
         self.font = pg.font.SysFont(pg.font.get_default_font(), 20)
         self.color = (255,255,255)
 
-    def draw(self, screen):
-        surface = self.font.render(
-            '%.0f fps' % self.display.fps,
-            True,
-            self.color,
-        )
-        width, height = self.display.screen_size
-        x = width - surface.get_width() - 10
-        y = 10
-        screen.blit(surface, (x, y))
+    def text(self):
+        return [
+            '{:.0f} fps'.format(self.display.fps),
+            'player speed: {:.1f}'.format(
+                vec.mag(self.display.environment.particles[0].velocity)),
+        ]
 
-            
+
+    def draw(self, screen):
+        screen_width, screen_height = self.display.screen_size
+        y = 10
+        for line in self.text():
+            surface = self.font.render(
+                line,
+                True,
+                self.color,
+            )
+            x = screen_width - surface.get_width() - 10
+            screen.blit(surface, (x, y))
+            y += surface.get_height()
+
 class JoystickWidget(object):
     def __init__(self, display):
         self.display = display
