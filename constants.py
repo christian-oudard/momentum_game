@@ -23,7 +23,6 @@ player_turn_rate_radians = player_turn_rate * (2 * math.pi)
 # Player thrust strength varies based on the current speed in the
 # direction it is already pointing.
 player_thrust_curve = [
-    (0.0, 80.0),
     (5.0, 50.0),
     (7.0, 40.0),
     (9.0, 30.0),
@@ -31,7 +30,7 @@ player_thrust_curve = [
     (20.0, 10.0),
     (None, 0.1),
 ]
-player_braking_strength = 80.0
+player_braking_strength = 60.0
 player_minimum_brake_speed = 1.0
 
 # Collision restitution.

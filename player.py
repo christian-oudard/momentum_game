@@ -26,18 +26,18 @@ class Player(Particle):
         self.direction = heading_to_vector(self.heading)
 
         # The up key thrusts, and the down key brakes.
+        speed = vec.mag(self.velocity)
         player_force = (0, 0)
         if INPUT.y_axis == +1:
-            # Handle thrust. Add momentum in the direction we are facing.
-            # We vary the thrust depending on how fast the player is already
-            # traveling in the direction it is facing.
-            speed = vec.dot(self.velocity, self.direction)
+            # Handle thrust.
+            # We vary the thrust depending on how fast the player is
+            # already moving.
             thrust = thrust_for_speed(speed)
             player_force = vec.mul(self.direction, thrust)
         elif INPUT.y_axis == -1:
             # Handle braking.
             # Always oppose the current velocity.
-            if vec.mag(self.velocity) >= c.player_minimum_brake_speed:
+            if speed >= c.player_minimum_brake_speed:
                 player_force = vec.norm(self.velocity, -c.player_braking_strength)
 
         super(Player, self).update(elapsed_seconds, player_force)
