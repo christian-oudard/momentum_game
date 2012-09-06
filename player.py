@@ -9,9 +9,9 @@ INPUT = InputManager.getInstance()
 def heading_to_vector(heading):
     return vec.rotate((1, 0), heading)
 
-def thrust_for_speed(speed):
-    for s, t in c.player_thrust_curve:
-        if s is None or speed < s:
+def curve_value(key, curve):
+    for s, t in curve:
+        if s is None or key < s:
             return t
 
 class Player(Particle):
@@ -32,13 +32,19 @@ class Player(Particle):
             # Handle thrust.
             # We vary the thrust depending on how fast the player is
             # already moving.
-            thrust = thrust_for_speed(speed)
-            player_force = vec.mul(self.direction, thrust)
+            thrust = curve_value(speed, c.player_thrust_curve)
+            player_force = vec.add(
+                player_force,
+                vec.mul(self.direction, thrust),
+            )
         elif INPUT.y_axis == -1:
             # Handle braking.
             # Always oppose the current velocity.
             if speed >= c.player_minimum_brake_speed:
-                player_force = vec.norm(self.velocity, -c.player_braking_strength)
+                player_force = vec.add(
+                    player_force,
+                    vec.norm(self.velocity, -c.player_braking_strength),
+                )
 
         # Handle rudder. We continuously bring the direction of the
         # player's movement to be closer in line with the direction

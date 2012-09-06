@@ -1,8 +1,6 @@
 TODO
 player physics
-3 - rudder effect for steering
-    rudder friction and rudder quality tunable parameters. 0.0 friction and infinite quality is a perfect frictionless rudder that converts every bit of energy to the correct direction instantly, with no loss. Higher friction parameters slow down the ship in the direction across the rudder. Lower quality parameters let some "water" through, converting just some of the energy into the correct direction per second.Maybe have to vary friction with the attack angle, so that high speed against rudder almost flat doesn't freak out. 
-    - Is there a way to make the rudder single-direction so it doesn't run backward?
+- ramp-up for turning rate
 
 
 code
@@ -12,6 +10,4 @@ code
 
 bugs
 - fix extreme speed allowing particles to pass through walls.
-- fix wall endpoints piercing through particles. to happen, it must be moving
-  diagonally toward the point, but with the center moving away from the line of
-  the wall.
+- fix wall endpoints piercing through particles. to happen, it must be moving diagonally toward the point, but with the center moving away from the line of the wall.
