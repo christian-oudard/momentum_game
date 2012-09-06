@@ -14,9 +14,14 @@ max_speed2 = max_speed ** 2
 drag_rate = 0.5
 
 # Player physics.
-player_rudder_strength = 5.0
+player_rudder_strength = 3.0
+
+player_start_turn_rate = 0.15 # full rotations / second
+player_start_turn_rate_radians = player_start_turn_rate * (2 * math.pi)
+player_start_turn_time = 0.2 # seconds
 player_turn_rate = 0.8 # full rotations / second
 player_turn_rate_radians = player_turn_rate * (2 * math.pi)
+
 player_braking_strength = 30.0
 player_minimum_brake_speed = 0.5
 player_thrust_curve = [

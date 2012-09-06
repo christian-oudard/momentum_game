@@ -7,6 +7,9 @@ import constants as c
 def heading_to_vector(heading):
     return vec.rotate((1, 0), heading)
 
+def interpolate(low, high, amount):
+    return low + (high - low) * amount
+
 def curve_value(key, curve):
     for s, t in curve:
         if s is None or key < s:
@@ -18,11 +21,26 @@ class Player(Particle):
     def __init__(self, **kwargs):
         self.heading = kwargs.pop('heading', 0) # Heading in radians.
         self.direction = heading_to_vector(self.heading)
+        self.turning_time = 0.0
         super(Player, self).__init__(**kwargs)
 
     def update(self, elapsed_seconds, force=None):
         # Handle turning. The left and right keys turn the player.
-        self.heading += INPUT.x_axis * c.player_turn_rate_radians * elapsed_seconds
+        if INPUT.x_axis == 0:
+            self.turning_time = 0.0
+        else:
+            self.turning_time += elapsed_seconds
+
+        if self.turning_time >= c.player_start_turn_time:
+            turn_rate = c.player_turn_rate_radians
+        else:
+            turn_rate = interpolate(
+                c.player_start_turn_rate_radians,
+                c.player_turn_rate_radians,
+                self.turning_time / c.player_start_turn_time,
+            )
+
+        self.heading += INPUT.x_axis * turn_rate * elapsed_seconds
         self.direction = heading_to_vector(self.heading)
 
         # The up key thrusts, and the down key brakes.

@@ -1,6 +1,6 @@
 TODO
 player physics
-- ramp-up for turning rate
+- proper linear interpolation for acceleration?
 
 code
 
