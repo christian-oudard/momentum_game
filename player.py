@@ -1,6 +1,6 @@
 import vec
 
-from inputmanager import INPUT
+from input_manager import INPUT
 from particle import Particle
 import constants as c
 

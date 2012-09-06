@@ -1,20 +1,19 @@
 from __future__ import division
 import pygame as pg
-from displaymanager import DisplayManager
+from display import Display
 from environment import Environment
-from inputmanager import INPUT
+from input_manager import INPUT
 
 # constants #
 MAXFPS = 60
 SCREENSIZE = (800, 600)
-
 
 def main():
     pg.init()
     pg.font.init()
 
     env = Environment()
-    disp = DisplayManager(env, SCREENSIZE)
+    disp = Display(env, SCREENSIZE)
 
     update_fps_event = pg.USEREVENT + 1
     pg.time.set_timer(update_fps_event, 700)

@@ -2,7 +2,7 @@ import pygame as pg
 
 import vec
 from environment import Environment
-from inputmanager import INPUT
+from input_manager import INPUT
 from graphics import Graphics
 
 # debug switches #
@@ -15,7 +15,7 @@ FULLSCREEN = False
 # colors #
 BG_COLOR = (128,128,255)
 
-class DisplayManager(object):
+class Display(object):
     """
     The display manager owns the pygame screen object, and the translation
     between world coordinates and screen coordinates. It also dispatches to the
