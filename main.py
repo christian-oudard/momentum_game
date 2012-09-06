@@ -17,12 +17,12 @@ def main():
 
     update_fps_event = pg.USEREVENT + 1
     pg.time.set_timer(update_fps_event, 700)
-    
+
     # vars #
     done = False
     clock = pg.time.Clock()
     clock.tick()  # necessary, or the first tick will be very large
-    
+
     # program loop #
     while not done:
         # events #
@@ -51,19 +51,19 @@ def main():
 
         # logic #
         INPUT.update()
-        
+
         elapsedticks = clock.get_time()
         env.update(elapsedticks)
-        
+
         # draw #
         disp.draw()
-        
+
         # tick #
         clock.tick(MAXFPS)
-        
+
     # end program loop #
 
     pg.quit()
-    
+
 if __name__ == '__main__':
     main()

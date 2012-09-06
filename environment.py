@@ -42,27 +42,27 @@ class Environment(object):
                 self.particles.append(o)
             elif isinstance(o, Wall):
                 self.walls.append(o)
-    
+
     def update(self, elapsed_ticks):
         elapsed_seconds = elapsed_ticks/1000
-        
+
         #TODO: Use collision algorithms faster than O(n**2).
-        
+
+        # Particle collisions.
+        for (p1, p2) in every_pair(self.particles):
+            collide_particles(p1, p2, c.restitution_particle)
+
         # Wall-particle collisions.
         for w in self.walls:
             for p in self.particles:
                 w.collide_wall(p, c.restitution_wall)
-                    
-        # Particle collisions.
-        for (p1, p2) in every_pair(self.particles):
-            collide_particles(p1, p2, c.restitution_particle)
-            
+
         for o in self.particles:
             o.update(elapsed_seconds)
 
 def every_pair(iterable):
     """An iterator through every pair in iterable
-    
+
     Yields each distinct unordered pair. Only works if all items only
     compare equal to themselves.
     """
