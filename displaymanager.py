@@ -2,7 +2,7 @@ import pygame as pg
 
 import vec
 from environment import Environment
-from inputmanager import InputManager
+from inputmanager import INPUT
 from graphics import Graphics
 
 # debug switches #
@@ -14,9 +14,6 @@ FULLSCREEN = False
 
 # colors #
 BG_COLOR = (128,128,255)
-
-# handles #
-INPUT = InputManager.getInstance()
 
 class DisplayManager(object):
     """

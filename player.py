@@ -1,10 +1,8 @@
 import vec
 
-from inputmanager import InputManager
+from inputmanager import INPUT
 from particle import Particle
 import constants as c
-
-INPUT = InputManager.getInstance()
 
 def heading_to_vector(heading):
     return vec.rotate((1, 0), heading)

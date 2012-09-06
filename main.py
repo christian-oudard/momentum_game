@@ -1,31 +1,23 @@
 from __future__ import division
 import pygame as pg
-from singletonmixin import SingletonException
 from displaymanager import DisplayManager
 from environment import Environment
-from inputmanager import InputManager
-
-# debug switches #
-SHOW_FPS = True
+from inputmanager import INPUT
 
 # constants #
 MAXFPS = 60
 SCREENSIZE = (800, 600)
 
-# handle #
-INPUT = InputManager.getInstance()
 
 def main():
     pg.init()
     pg.font.init()
-    INPUT.init()
 
     env = Environment()
     disp = DisplayManager(env, SCREENSIZE)
 
-    if SHOW_FPS:
-        update_fps = pg.USEREVENT + 1
-        pg.time.set_timer(update_fps, 700)
+    update_fps_event = pg.USEREVENT + 1
+    pg.time.set_timer(update_fps_event, 700)
     
     # vars #
     done = False
@@ -55,9 +47,8 @@ def main():
                 pass
             elif e.type == pg.MOUSEBUTTONUP:
                 pass
-            elif SHOW_FPS:
-                if e.type == update_fps:
-                    disp.set_fps(clock.get_fps())
+            elif e.type == update_fps_event:
+                disp.set_fps(clock.get_fps())
 
         # logic #
         INPUT.update()
