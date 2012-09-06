@@ -1,6 +1,8 @@
 import vec
 
 class Wall(object):
+    graphics_type = 'wall'
+
     def __init__(self, p1, p2, graphic=None):
         self.p1 = p1
         self.p2 = p2

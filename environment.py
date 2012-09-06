@@ -13,6 +13,7 @@ import constants as c
 
 class Environment(object):
     def __init__(self):
+        self.objects = []
         self.particles = []
         self.walls = []
 
@@ -36,6 +37,7 @@ class Environment(object):
 
     def add_objects(self, objects):
         for o in objects:
+            self.objects.append(o)
             if isinstance(o, Particle):
                 self.particles.append(o)
             elif isinstance(o, Wall):

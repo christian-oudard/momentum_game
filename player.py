@@ -13,6 +13,8 @@ def curve_value(key, curve):
             return t
 
 class Player(Particle):
+    graphics_type = 'player'
+
     def __init__(self, **kwargs):
         self.heading = kwargs.pop('heading', 0) # Heading in radians.
         self.direction = heading_to_vector(self.heading)

@@ -3,8 +3,7 @@ player physics
 - ramp-up for turning rate
 
 code
-1 - have a real dispatch instead of isinstance BS
-2 - remove singleton BS. we need to erect a correct flow of information between the various pieces for this though. global singletons are a very lazy and tangled way to avoid the issue.
+- pylint
 - rename particle to entity or something
 
 bugs

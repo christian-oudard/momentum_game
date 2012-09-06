@@ -5,6 +5,8 @@ import vec
 import constants as c
 
 class Particle(object):
+    graphics_type = 'particle'
+
     def __init__(
         self,
         pos=(0, 0),

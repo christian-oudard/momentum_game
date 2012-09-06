@@ -10,6 +10,14 @@ class Graphics(object):
     def __init__(self, display):
          self.display = display
 
+    def draw(self, o):
+        drawing_functions = {
+            'player': self.draw_player,
+            'particle': self.draw_particle,
+            'wall': self.draw_wall,
+        }
+        drawing_functions[o.graphics_type](o)
+
     def draw_particle(self, particle):
         pg.draw.circle(
             self.display.screen, 

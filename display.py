@@ -49,15 +49,8 @@ class Display(object):
     def draw(self):
         self.screen.fill(BG_COLOR)
 
-        for p in self.environment.particles:
-            #HACK: Ew, do this better.
-            if p.__class__.__name__ == 'Player':
-                self.graphics.draw_player(p)
-            else:
-                self.graphics.draw_particle(p)
-        for w in self.environment.walls:
-            self.graphics.draw_wall(w)
-
+        for o in self.environment.objects:
+            self.graphics.draw(o)
         for widget in self.widgets:
             widget.draw(self.screen)
 
