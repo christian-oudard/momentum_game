@@ -4,11 +4,6 @@ import math
 import vec
 import constants as c
 
-def drag_for_speed(speed):
-    for s, d in c.drag_curve:
-        if not s or speed < s:
-            return d
-
 class Particle(object):
     def __init__(
         self,
@@ -31,7 +26,7 @@ class Particle(object):
         # Decrease the magnitude of the velocity vector by
         # the amount of drag.
         speed = vec.mag(self.velocity)
-        drag = drag_for_speed(speed) * elapsed_seconds
+        drag = c.drag_rate * elapsed_seconds
         if drag > speed:
             self.velocity = (0, 0)
         elif drag != 0 and self.velocity != (0, 0):
