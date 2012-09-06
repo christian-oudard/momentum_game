@@ -1,11 +1,5 @@
 from __future__ import division
 
-import itertools
-import math
-
-from pygame import Rect
-
-import vec
 from particle import Particle, collide_particles
 from player import Player
 from wall import Wall
@@ -71,4 +65,4 @@ def every_pair(iterable):
             if a is b:
                 break
             else:
-                yield (a,b)
+                yield a, b

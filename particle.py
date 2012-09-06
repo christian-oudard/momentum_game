@@ -13,7 +13,6 @@ class Particle(object):
         velocity=(0, 0),
         mass=1.0,
         radius=None,
-        graphic=None,
     ):
         self.pos = pos
         self.velocity = velocity
@@ -21,7 +20,6 @@ class Particle(object):
         if radius is None:
             radius = math.sqrt(self.mass)
         self.radius = radius
-        self.graphic = graphic
         
     def update(self, elapsed_seconds, force=None):
         # Apply drag.
@@ -46,7 +44,7 @@ class Particle(object):
         elif speed < c.min_speed:
             # Don't clip under minimum speed if we are being forced.
             if force is None or force == (0, 0):
-                self.velocity = (0,0)
+                self.velocity = (0, 0)
 
         # Apply force if necessary.
         if force is not None:

@@ -1,7 +1,6 @@
 import pygame as pg
 
 import vec
-from environment import Environment
 from input_manager import INPUT
 from graphics import Graphics
 
@@ -13,7 +12,7 @@ SHOW_INFO = True
 FULLSCREEN = False
 
 # colors #
-BG_COLOR = (128,128,255)
+BG_COLOR = (128, 128, 255)
 
 class Display(object):
     """
@@ -73,10 +72,11 @@ class Display(object):
 
 
 class InfoWidget(object):
+    text_color = (255, 255, 255)
+
     def __init__(self, display):
         self.display = display
         self.font = pg.font.SysFont(pg.font.get_default_font(), 20)
-        self.color = (255,255,255)
 
     def text(self):
         return [
@@ -87,38 +87,55 @@ class InfoWidget(object):
 
 
     def draw(self, screen):
-        screen_width, screen_height = self.display.screen_size
+        screen_width, _screen_height = self.display.screen_size
         y = 10
         for line in self.text():
             surface = self.font.render(
                 line,
                 True,
-                self.color,
+                self.text_color,
             )
             x = screen_width - surface.get_width() - 10
             screen.blit(surface, (x, y))
             y += surface.get_height()
 
+
 class JoystickWidget(object):
+    green = (128, 255, 128)
+    clear = (0, 0, 0, 0)
+    red = (196, 64, 64)
+
     def __init__(self, display):
         self.display = display
-        self.surface = pg.Surface((30,30), pg.SRCALPHA, 32)
+        self.surface = pg.Surface((30, 30), pg.SRCALPHA, 32)
 
     def draw(self, screen):
         self.surface.lock()
-        self.surface.fill((0,0,0,0))
-        pg.draw.line(self.surface, (128,255,128), (14-10,14), (14+10,14), 2)
-        pg.draw.line(self.surface, (128,255,128), (14,14-10), (14,15+10), 2)
+        self.surface.fill(self.clear)
+        pg.draw.line(
+            self.surface,
+            self.green,
+            (14-10, 14),
+            (14+10, 14),
+            2,
+        )
+        pg.draw.line(
+            self.surface,
+            self.green,
+            (14, 14-10),
+            (14, 15+10),
+            2,
+        )
         joypos = vec.mul((INPUT.x_axis, -INPUT.y_axis), 8)
         pg.draw.circle(
             self.surface,
-            (196,64,64),
+            self.red,
             vec.add(joypos, (15,15)),
             4,
         )
         self.surface.unlock()
 
-        width, height = self.display.screen_size
+        _width, height = self.display.screen_size
         x = 10
         y = height - self.surface.get_height() - 10
         screen.blit(self.surface, (x, y))

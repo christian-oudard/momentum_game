@@ -8,15 +8,15 @@ DIRECTION_COLOR = (255, 255, 255)
 
 class Graphics(object):
     def __init__(self, display):
-         self.display = display
+        self.display = display
 
-    def draw(self, o):
+    def draw(self, obj):
         drawing_functions = {
             'player': self.draw_player,
             'particle': self.draw_particle,
             'wall': self.draw_wall,
         }
-        drawing_functions[o.graphics_type](o)
+        drawing_functions[obj.graphics_type](obj)
 
     def draw_particle(self, particle):
         pg.draw.circle(

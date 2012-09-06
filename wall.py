@@ -3,13 +3,11 @@ import vec
 class Wall(object):
     graphics_type = 'wall'
 
-    def __init__(self, p1, p2, graphic=None):
+    def __init__(self, p1, p2):
         self.p1 = p1
         self.p2 = p2
         self.tangent = vec.vfrom(self.p1, self.p2)
         self.normal = vec.perp(self.tangent)
-        
-        self.graphic = graphic
         
     def update(self, elapsedticks):
         pass

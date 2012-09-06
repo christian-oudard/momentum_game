@@ -27,7 +27,8 @@ def main():
     while not done:
         # events #
         for e in pg.event.get():
-            if e.type == pg.QUIT: done = True
+            if e.type == pg.QUIT:
+                done = True
             elif e.type == pg.KEYDOWN:
                 key = e.key
                 if key == pg.K_ESCAPE:
