@@ -20,10 +20,6 @@ class Wall(object):
         # Find a perpendicular vector from the wall to p.
         v_dist = vec.proj(v1, self.normal)
 
-        # Test that p is headed toward the wall.
-        if vec.dot(p.velocity, v_dist) > 0:
-            return
-        
         # Test distance from the wall.
         radius2 = p.radius**2
         if vec.mag2(v_dist) > radius2:
@@ -43,6 +39,10 @@ class Wall(object):
                 return
             p.rebound(v2, self.p2, restitution)
             return    
+
+        # Test that p is headed toward the wall.
+        if vec.dot(p.velocity, v_dist) > 0:
+            return
 
         # We are definitely not off the ends of the segment, and close enough
         # that we are colliding.

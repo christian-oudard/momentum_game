@@ -3,9 +3,6 @@ player physics
 - ramp-up for turning rate
 
 code
-- pylint
-- rename particle to entity or something
 
 bugs
 - fix extreme speed allowing particles to pass through walls.
-- fix wall endpoints piercing through particles. to happen, it must be moving diagonally toward the point, but with the center moving away from the line of the wall.
