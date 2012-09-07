@@ -72,9 +72,11 @@ class Player(Particle):
         # Handle rudder. We continuously bring the direction of the
         # player's movement to be closer in line with the direction
         # it is facing.
-        target_velocity = vec.norm(self.direction, speed)
-        rudder_force = vec.vfrom(self.velocity, target_velocity)
-        rudder_force = vec.mul(rudder_force, c.player_rudder_strength)
-        force = vec.add(force, rudder_force)
+        # Don't use the rudder if the player is coasting.
+        if self.input.x_axis != 0 or self.input.y_axis != 0:
+            target_velocity = vec.norm(self.direction, speed)
+            rudder_force = vec.vfrom(self.velocity, target_velocity)
+            rudder_force = vec.mul(rudder_force, c.player_rudder_strength)
+            force = vec.add(force, rudder_force)
 
         super(Player, self).update(elapsed_seconds, force)
