@@ -1,4 +1,3 @@
-from __future__ import division
 import pygame as pg
 from display import Display
 from environment import Environment

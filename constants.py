@@ -1,12 +1,12 @@
+from __future__ import division
+
 import math
 
-# Physics constants.
+epsilon = 10**-10
 
 # Speed limits.
 min_speed = 0.2
-min_speed2 = min_speed ** 2
-max_speed = 40.0
-max_speed2 = max_speed ** 2
+max_speed = 100.0
 
 # Drag.
 # Drag rate is defined as the amount of speed lost every second, and is

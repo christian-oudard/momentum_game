@@ -1,8 +1,25 @@
 TODO
+gameplay
+- multiplayer, same keyboard
+	- bumper cars style
+- follow camera
+- zoom camera based on speed and how far apart multiple players are
+- large world
+- minimap?
+- extreme temporary explosive accelleration is FUN
+	- charge up and explode forward, with increased mass
+- acceleration arrows? >>
+- take damage when crashing into walls?
+
+- AI opponents? hard
+
+theme
+- space? overdone
+- sumo? maybe
+
 player physics
 - proper linear interpolation for acceleration?
 
 code
 
 bugs
-- fix extreme speed allowing particles to pass through walls.

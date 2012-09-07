@@ -14,6 +14,7 @@ class Particle(object):
         mass=1.0,
         radius=None,
     ):
+        self.last_pos = pos
         self.pos = pos
         self.velocity = velocity
         self.mass = mass
@@ -54,6 +55,7 @@ class Particle(object):
             )
 
         # Update position based on velocity.
+        self.last_pos = self.pos
         self.pos = vec.add(
             self.pos,
             vec.mul(self.velocity, elapsed_seconds),
@@ -116,9 +118,6 @@ def collide_particles(p1, p2, restitution = 1):
         p1_initial * (2 * m1) / m1plusm2
     )
 
-    #DEBUG: check that restitution works out to the same value.
-    #print 'restitution = %.12f' % (-(p1_final-p2_final)/(p1_initial-p2_initial))
-    
     # Tangential component is unchanged, recombine.
     p1.velocity = vec.add(
         v1_tangent,
@@ -128,10 +127,3 @@ def collide_particles(p1, p2, restitution = 1):
         v2_tangent,
         vec.mul(normal, p2_final),
     )
-
-    # Adjust faster particle not to clip inside slower one.
-    v_span = vec.norm(v_span, p1.radius + p2.radius)
-    if vec.mag2(p1.velocity) >= vec.mag2(p2.velocity):
-        p1.pos = vec.sub(p2.pos, v_span)
-    else:
-        p2.pos = vec.add(p1.pos, v_span)

@@ -38,7 +38,7 @@ class Environment(object):
                 self.walls.append(o)
 
     def update(self, elapsed_ticks):
-        elapsed_seconds = elapsed_ticks/1000
+        elapsed_seconds = elapsed_ticks / 1000
 
         #TODO: Use collision algorithms faster than O(n**2).
 

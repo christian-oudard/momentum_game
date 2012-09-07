@@ -1,3 +1,5 @@
+from __future__ import division
+
 import vec
 
 from input_manager import INPUT
