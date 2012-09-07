@@ -1,20 +1,24 @@
 TODO
 gameplay
-1 - multiplayer, same keyboard
-	- bumper cars style gameplay
-2 - follow camera
-3 - zoom camera based on speed and how far apart multiple players are
-4 - large world
-- minimap?
-- extreme temporary explosive accelleration is FUN
+2 - boost
+    - extreme temporary explosive accelleration is FUN
 	- charge up and explode forward, with increased mass
+    - triggers when braking for more than a timeout while stopped.
+    - gets more powerful the longer you hold it, up to a limit.
+3 - follow camera
+4 - zoom camera based on speed and how far apart multiple players are
+5 - large world
+- minimap?
 - acceleration arrows? >>
 - take damage when crashing into walls?
 
 - AI opponents? hard
 - different restitution amount for certain collisions? high restitution bumpers? certain moves from characters with tiny restitution? zero restitution?
 
+graphics
+1 - temporary graphics state to show turning, thrusting, braking, and boosting
 theme
+- bumper cars style gameplay
 - space? overdone
 - sumo? maybe
 

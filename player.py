@@ -29,9 +29,38 @@ class Player(Particle):
     def set_input(self, inp):
         self.input = inp
 
+    def update_controls(self):
+        """
+        Interpret controller input as player state.
+
+        The up key thrusts, and the down key brakes.
+        The left and right keys turn left and right.
+        """
+        self.turn_direction = self.input.x_axis
+        if self.input.y_axis == +1:
+            # Thrust.
+            self.do_thrust = True
+            self.do_brake = False
+        elif self.input.y_axis == -1:
+            # Brake.
+            self.do_thrust = False
+            self.do_brake = True
+        else:
+            # Coast.
+            self.do_thrust = False
+            self.do_brake = False
+
+        self.do_coast = (
+            not self.do_thrust and
+            not self.do_brake and
+            self.turn_direction == 0
+        )
+
     def update(self, elapsed_seconds, force=None):
-        # Handle turning. The left and right keys turn the player.
-        if self.input.x_axis == 0:
+        self.update_controls()
+
+        # Handle turning.
+        if self.turn_direction == 0:
             self.turning_time = 0.0
         else:
             self.turning_time += elapsed_seconds
@@ -45,14 +74,13 @@ class Player(Particle):
                 self.turning_time / c.player_start_turn_time,
             )
 
-        self.heading += self.input.x_axis * turn_rate * elapsed_seconds
+        self.heading += self.turn_direction * turn_rate * elapsed_seconds
         self.direction = heading_to_vector(self.heading)
 
-        # The up key thrusts, and the down key brakes.
+        # Handle thrust and brake.
         speed = vec.mag(self.velocity)
         force = (0, 0)
-        if self.input.y_axis == +1:
-            # Handle thrust.
+        if self.do_thrust:
             # We vary the thrust depending on how fast the player is
             # already moving.
             thrust = curve_value(speed, c.player_thrust_curve)
@@ -60,8 +88,7 @@ class Player(Particle):
                 force,
                 vec.mul(self.direction, thrust),
             )
-        elif self.input.y_axis == -1:
-            # Handle braking.
+        if self.do_brake:
             # Always oppose the current velocity.
             if speed >= c.player_minimum_brake_speed:
                 force = vec.add(
@@ -73,7 +100,7 @@ class Player(Particle):
         # player's movement to be closer in line with the direction
         # it is facing.
         # Don't use the rudder if the player is coasting.
-        if self.input.x_axis != 0 or self.input.y_axis != 0:
+        if not self.do_coast:
             target_velocity = vec.norm(self.direction, speed)
             rudder_force = vec.vfrom(self.velocity, target_velocity)
             rudder_force = vec.mul(rudder_force, c.player_rudder_strength)
