@@ -31,8 +31,11 @@ class Player(Particle):
         self.turning_time = 0.0
         self.boost_charge_time = 0.0
         self.boost_time_remaining = 0.0
+        self.boost_heavy_time_remaining = 0.0
 
         super(Player, self).__init__(**kwargs)
+
+        self.original_mass = self.mass
 
     def set_input(self, inp):
         self.input = inp
@@ -83,10 +86,13 @@ class Player(Particle):
             self.boost_charge_time >= c.player_boost_ready_time
         ):
             self.boost_time_remaining = c.player_boost_time
+            self.boost_heavy_time_remaining = c.player_boost_heavy_time
 
         # Time out boost state.
         self.boost_time_remaining -= elapsed_seconds
         self.boost_time_remaining = max(self.boost_time_remaining, 0.0)
+        self.boost_heavy_time_remaining -= elapsed_seconds
+        self.boost_heavy_time_remaining = max(self.boost_heavy_time_remaining, 0.0)
 
         # Charge boost by holding the brake key.
         if self.do_brake and self.speed < c.player_minimum_brake_speed:
@@ -138,6 +144,13 @@ class Player(Particle):
                 force,
                 vec.mul(self.direction, c.player_boost_strength),
             )
+        # Get heavy while boosting.
+        if self.boost_heavy_time_remaining > 0.0:
+            self.mass = self.original_mass * c.player_boost_heavy_multiplier
+            self.restitution = c.player_boost_restitution
+        else:
+            self.mass = self.original_mass
+            self.restitution = c.restitution_particle
 
         # Handle rudder. We continuously bring the direction of the
         # player's movement to be closer in line with the direction

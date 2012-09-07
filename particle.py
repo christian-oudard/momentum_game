@@ -6,6 +6,7 @@ import constants as c
 
 class Particle(object):
     graphics_type = 'particle'
+    restitution = c.restitution_particle
 
     def __init__(
         self,

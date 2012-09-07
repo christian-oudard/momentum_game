@@ -35,6 +35,9 @@ player_thrust_curve = [
     (None, 0.1),
 ]
 
-player_boost_ready_time = 0.5 # seconds
+player_boost_ready_time = 0.4 # seconds
 player_boost_time = 0.05 # seconds
-player_boost_strength = 1000.0
+player_boost_strength = 1500.0
+player_boost_heavy_time = 0.5 # seconds
+player_boost_heavy_multiplier = 5.0
+player_boost_restitution = 1.3

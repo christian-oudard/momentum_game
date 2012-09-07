@@ -35,7 +35,7 @@ class Graphics(object):
                 vec.norm(player.direction, -1.5 * player.radius),
             )
             self.line(THRUST_COLOR, player.pos, trailing_point, .5 * player.radius)
-        if player.boost_time_remaining > 0.0:
+        if player.boost_heavy_time_remaining > 0.0:
             trailing_point = vec.add(
                 player.pos,
                 vec.norm(player.direction, -2.0 * player.radius),
