@@ -4,7 +4,7 @@ from environment import Environment
 from input_manager import INPUT
 
 # constants #
-MAXFPS = 60
+MAXFPS = 1000
 SCREENSIZE = (800, 600)
 
 def main():

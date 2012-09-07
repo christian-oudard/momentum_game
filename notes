@@ -12,6 +12,7 @@ gameplay
 - take damage when crashing into walls?
 
 - AI opponents? hard
+- different restitution amount for certain collisions? high restitution bumpers? certain moves from characters with tiny restitution? zero restitution?
 
 theme
 - space? overdone

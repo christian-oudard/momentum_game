@@ -2,24 +2,26 @@ from __future__ import division
 
 import math
 
+## Global physics
+
 epsilon = 10**-10
-
-# Speed limits.
-min_speed = 0.2
-max_speed = 100.0
-
-# Drag.
+max_speed = 100.0 # units / second
 # Drag rate is defined as the amount of speed lost every second, and is
 # in the range of 0 to infinity.
 drag_rate = 0.5
+# Collision restitution.
+restitution_wall = 0.6
+restitution_particle = 1.0
 
-# Player physics.
+
+## Player physics.
+
 player_rudder_strength = 3.0
 
-player_start_turn_rate = 0.15 # full rotations / second
+player_start_turn_rate = 0.1 # full rotations / second
 player_start_turn_rate_radians = player_start_turn_rate * (2 * math.pi)
-player_start_turn_time = 0.2 # seconds
-player_turn_rate = 0.8 # full rotations / second
+player_start_turn_time = 0.25 # seconds
+player_turn_rate = 1.0 # full rotations / second
 player_turn_rate_radians = player_turn_rate * (2 * math.pi)
 
 player_braking_strength = 30.0
@@ -33,7 +35,3 @@ player_thrust_curve = [
     (30.0, 5.0),
     (None, 0.1),
 ]
-
-# Collision restitution.
-restitution_wall = 0.6
-restitution_particle = 1.0

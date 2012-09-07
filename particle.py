@@ -38,14 +38,9 @@ class Particle(object):
             )
 
         # Limit to maximum speed.
-        # Under minimum speed, stop completely.
         speed = vec.mag(self.velocity)
         if speed > c.max_speed:
             self.velocity = vec.norm(self.velocity, c.max_speed)
-        elif speed < c.min_speed:
-            # Don't clip under minimum speed if we are being forced.
-            if force is None or force == (0, 0):
-                self.velocity = (0, 0)
 
         # Apply force if necessary.
         if force is not None:
