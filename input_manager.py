@@ -12,19 +12,22 @@ class InputManager(object):
     y_axis -- -1 for down, +1 for up, 0 for neutral
     """
     
-    def __init__(self):
+    def __init__(self, keymap):
+        self.keymap = keymap
         self.x_axis = 0
         self.y_axis = 0
         self.right_last = True
         self.up_last = True
-        
-        #TEMP: hardcoded keymap.
-        self.keymap = {
-            'up': pg.K_UP,
-            'down': pg.K_DOWN,
-            'right': pg.K_RIGHT,
-            'left': pg.K_LEFT,
-        }
+
+    def track_keypress(self, key):
+        if key == self.keymap['up']:
+            self.up_last = True
+        elif key == self.keymap['down']:
+            self.up_last = False
+        elif key == self.keymap['right']:
+            self.right_last = True
+        elif key == self.keymap['left']:
+            self.right_last = False
 
     def update(self):
         keys = pg.key.get_pressed()
@@ -60,5 +63,3 @@ class InputManager(object):
                 self.y_axis = +1
             else:
                 self.y_axis = -1
-
-INPUT = InputManager()

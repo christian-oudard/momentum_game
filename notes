@@ -1,10 +1,10 @@
 TODO
 gameplay
-- multiplayer, same keyboard
-	- bumper cars style
-- follow camera
-- zoom camera based on speed and how far apart multiple players are
-- large world
+1 - multiplayer, same keyboard
+	- bumper cars style gameplay
+2 - follow camera
+3 - zoom camera based on speed and how far apart multiple players are
+4 - large world
 - minimap?
 - extreme temporary explosive accelleration is FUN
 	- charge up and explode forward, with increased mass

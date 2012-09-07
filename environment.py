@@ -1,41 +1,34 @@
 from __future__ import division
 
-from particle import Particle, collide_particles
 from player import Player
+from particle import Particle, collide_particles
 from wall import Wall
 import constants as c
 
 class Environment(object):
-    def __init__(self):
+    def __init__(self, inputs):
+        self.inputs = inputs
         self.objects = []
+        self.players = []
         self.particles = []
         self.walls = []
 
-        ##TEMP, set up level
-        self.add_objects([
-            Player(pos=(2,2),velocity=(0,0), mass=1.0, radius = 1.0),
-            Particle(pos=(0,3),velocity=(-1,3), mass=1),
-            Particle(pos=(-5,0),velocity=(-1,2), mass=.25),
-            Particle(pos=(3,-3),velocity=(0,-3), mass=5),
-            Wall((-3,-3), (-6,3)),
-            Wall((6,3), (6,-3)),
-            Wall((0,8), (-15,12)),
-            Wall((-15,12), (-12,-7)),
-            Wall((-12,-7), (2,-11)),
-            Wall((2,-11), (14,-10)),
-            Wall((14,-10), (17,2)),
-            Wall((17,2), (15,13)),
-            Wall((15,13), (0,8)),
-        ])
-        ##
+    def load_level(self, level):
+        for object_class, args in level:
+            if isinstance(args, dict):
+                obj = object_class(**args)
+            else:
+                obj = object_class(*args)
+            self.objects.append(obj)
+            if isinstance(obj, Player):
+                self.players.append(obj)
+            if isinstance(obj, Particle):
+                self.particles.append(obj)
+            if isinstance(obj, Wall):
+                self.walls.append(obj)
 
-    def add_objects(self, objects):
-        for o in objects:
-            self.objects.append(o)
-            if isinstance(o, Particle):
-                self.particles.append(o)
-            elif isinstance(o, Wall):
-                self.walls.append(o)
+        for inp, player in zip(self.inputs, self.players):
+            player.set_input(inp)
 
     def update(self, elapsed_ticks):
         elapsed_seconds = elapsed_ticks / 1000

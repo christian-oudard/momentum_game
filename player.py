@@ -2,7 +2,6 @@ from __future__ import division
 
 import vec
 
-from input_manager import INPUT
 from particle import Particle
 import constants as c
 
@@ -21,14 +20,18 @@ class Player(Particle):
     graphics_type = 'player'
 
     def __init__(self, **kwargs):
+        self.input = None
         self.heading = kwargs.pop('heading', 0) # Heading in radians.
         self.direction = heading_to_vector(self.heading)
         self.turning_time = 0.0
         super(Player, self).__init__(**kwargs)
 
+    def set_input(self, inp):
+        self.input = inp
+
     def update(self, elapsed_seconds, force=None):
         # Handle turning. The left and right keys turn the player.
-        if INPUT.x_axis == 0:
+        if self.input.x_axis == 0:
             self.turning_time = 0.0
         else:
             self.turning_time += elapsed_seconds
@@ -42,13 +45,13 @@ class Player(Particle):
                 self.turning_time / c.player_start_turn_time,
             )
 
-        self.heading += INPUT.x_axis * turn_rate * elapsed_seconds
+        self.heading += self.input.x_axis * turn_rate * elapsed_seconds
         self.direction = heading_to_vector(self.heading)
 
         # The up key thrusts, and the down key brakes.
         speed = vec.mag(self.velocity)
         force = (0, 0)
-        if INPUT.y_axis == +1:
+        if self.input.y_axis == +1:
             # Handle thrust.
             # We vary the thrust depending on how fast the player is
             # already moving.
@@ -57,7 +60,7 @@ class Player(Particle):
                 force,
                 vec.mul(self.direction, thrust),
             )
-        elif INPUT.y_axis == -1:
+        elif self.input.y_axis == -1:
             # Handle braking.
             # Always oppose the current velocity.
             if speed >= c.player_minimum_brake_speed:

@@ -1,7 +1,6 @@
 import pygame as pg
 
 import vec
-from input_manager import INPUT
 from graphics import Graphics
 
 # debug switches #
@@ -27,18 +26,19 @@ class Display(object):
     def __init__(self, environment, screen_size):
         self.environment = environment
         self.screen_size = screen_size
-        self.pixels_per_unit = 20
+        self.pixels_per_unit = 15 # TEMP, hardcoded zoom level.
         flags = pg.HWSURFACE | pg.DOUBLEBUF
         if FULLSCREEN:
             flags |= pg.FULLSCREEN
         self.screen = pg.display.set_mode(tuple(self.screen_size), flags)
 
         self.screen_origin = vec.div(self.screen_size, 2)
-        
+
         self.widgets = []
 
         if SHOW_JOYSTICK:
-            self.widgets.append(JoystickWidget(self))
+            for i, inp in enumerate(self.environment.inputs):
+                self.widgets.append(JoystickWidget(self, inp, i))
         if SHOW_INFO:
             self.fps = 0.0
             self.widgets.append(InfoWidget(self))
@@ -57,7 +57,7 @@ class Display(object):
 
     def to_screen(self, pos):
         """Convert pos to screen coordinates.
-        
+
         Takes a tuple a world position, and returns a tuple for the
         screen position.
         """
@@ -79,12 +79,17 @@ class InfoWidget(object):
         self.font = pg.font.SysFont(pg.font.get_default_font(), 20)
 
     def text(self):
-        return [
+        lines = [
             '{:.0f} fps'.format(self.display.fps),
-            'player speed: {:.1f}'.format(
-                vec.mag(self.display.environment.particles[0].velocity)),
         ]
-
+        for i, p in enumerate(self.display.environment.players):
+            lines.append(
+                'player {} speed: {:.1f}'.format(
+                    i + 1,
+                    vec.mag(p.velocity),
+                )
+            )
+        return lines
 
     def draw(self, screen):
         screen_width, _screen_height = self.display.screen_size
@@ -105,8 +110,10 @@ class JoystickWidget(object):
     clear = (0, 0, 0, 0)
     red = (196, 64, 64)
 
-    def __init__(self, display):
+    def __init__(self, display, inp, number):
         self.display = display
+        self.input = inp
+        self.number = number
         self.surface = pg.Surface((30, 30), pg.SRCALPHA, 32)
 
     def draw(self, screen):
@@ -126,7 +133,7 @@ class JoystickWidget(object):
             (14, 15+10),
             2,
         )
-        joypos = vec.mul((INPUT.x_axis, -INPUT.y_axis), 8)
+        joypos = vec.mul((self.input.x_axis, -self.input.y_axis), 8)
         pg.draw.circle(
             self.surface,
             self.red,
@@ -136,6 +143,6 @@ class JoystickWidget(object):
         self.surface.unlock()
 
         _width, height = self.display.screen_size
-        x = 10
+        x = 10 + 30 * self.number
         y = height - self.surface.get_height() - 10
         screen.blit(self.surface, (x, y))

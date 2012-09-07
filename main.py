@@ -1,7 +1,8 @@
 import pygame as pg
 from display import Display
 from environment import Environment
-from input_manager import INPUT
+from input_manager import InputManager
+import levels
 
 # constants #
 MAXFPS = 1000
@@ -11,9 +12,27 @@ def main():
     pg.init()
     pg.font.init()
 
-    env = Environment()
-    disp = Display(env, SCREENSIZE)
+    #TEMP: hardcoded keymaps.
+    inputs = [
+        InputManager({
+            'up': pg.K_UP,
+            'down': pg.K_DOWN,
+            'left': pg.K_LEFT,
+            'right': pg.K_RIGHT,
+        }),
+        InputManager({
+            'up': pg.K_w,
+            'down': pg.K_s,
+            'left': pg.K_a,
+            'right': pg.K_d,
+        }),
+    ]
 
+    env = Environment(inputs)
+    disp = Display(env, SCREENSIZE)
+    env.load_level(levels.level1) # TEMP, hardcoded level selection.
+
+    # FPS tracking.
     update_fps_event = pg.USEREVENT + 1
     pg.time.set_timer(update_fps_event, 700)
 
@@ -32,14 +51,9 @@ def main():
                 key = e.key
                 if key == pg.K_ESCAPE:
                     pg.event.post(pg.event.Event(pg.QUIT))
-                elif key == pg.K_UP:
-                    INPUT.up_last = True
-                elif key == pg.K_DOWN:
-                    INPUT.up_last = False
-                elif key == pg.K_RIGHT:
-                    INPUT.right_last = True
-                elif key == pg.K_LEFT:
-                    INPUT.right_last = False
+                else:
+                    for inp in inputs:
+                        inp.track_keypress(e.key)
             elif e.type == pg.MOUSEMOTION:
                 pass
             elif e.type == pg.MOUSEBUTTONDOWN:
@@ -49,9 +63,9 @@ def main():
             elif e.type == update_fps_event:
                 disp.set_fps(clock.get_fps())
 
-        # logic #
-        INPUT.update()
-
+        # updates #
+        for inp in inputs:
+            inp.update()
         elapsedticks = clock.get_time()
         env.update(elapsedticks)
 
