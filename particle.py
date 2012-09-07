@@ -23,6 +23,13 @@ class Particle(object):
         self.radius = radius
         
     def update(self, elapsed_seconds, force=None):
+        # Apply force if necessary.
+        if force is not None:
+            self.velocity = vec.add(
+                self.velocity,
+                vec.mul(force, (elapsed_seconds / self.mass)),
+            )
+
         # Apply drag.
         # Decrease the magnitude of the velocity vector by
         # the amount of drag.
@@ -41,13 +48,6 @@ class Particle(object):
         speed = vec.mag(self.velocity)
         if speed > c.max_speed:
             self.velocity = vec.norm(self.velocity, c.max_speed)
-
-        # Apply force if necessary.
-        if force is not None:
-            self.velocity = vec.add(
-                self.velocity,
-                vec.mul(force, (elapsed_seconds / self.mass)),
-            )
 
         # Update position based on velocity.
         self.last_pos = self.pos

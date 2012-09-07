@@ -13,7 +13,6 @@ drag_rate = 0.5
 restitution_wall = 0.6
 restitution_particle = 1.0
 
-
 ## Player physics.
 
 player_rudder_strength = 3.0
