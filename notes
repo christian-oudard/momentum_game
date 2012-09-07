@@ -1,16 +1,10 @@
 TODO
 gameplay
-1 - boost
-    - extreme temporary explosive accelleration is FUN
-	- charge up and explode forward, with increased mass
-    - triggers when braking for more than a timeout while stopped.
-    - gets more powerful the longer you hold it, up to a limit.
-2 - follow camera
-3 - zoom camera based on speed and how far apart multiple players are
-4 - large world
+1 - follow camera
+2 - zoom camera based on speed and how far apart multiple players are
+3 - large world
 - minimap?
 - acceleration arrows? >>
-- take damage when crashing into walls?
 
 - AI opponents? hard
 - different restitution amount for certain collisions? high restitution bumpers? certain moves from characters with tiny restitution? zero restitution?

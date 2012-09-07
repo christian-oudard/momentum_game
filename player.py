@@ -33,6 +33,10 @@ class Player(Particle):
         self.boost_time_remaining = 0.0
         self.boost_heavy_time_remaining = 0.0
 
+        # Damage
+        self.damage = 0.0
+        self.dead = False
+
         super(Player, self).__init__(**kwargs)
 
         self.original_mass = self.mass
@@ -73,12 +77,6 @@ class Player(Particle):
             # Coast.
             self.do_thrust = False
             self.do_brake = False
-
-        self.do_coast = (
-            not self.do_thrust and
-            not self.do_brake and
-            self.turn_direction == 0
-        )
 
         # Trigger boost by releasing the brake key once charged.
         if (
@@ -155,11 +153,20 @@ class Player(Particle):
         # Handle rudder. We continuously bring the direction of the
         # player's movement to be closer in line with the direction
         # it is facing.
-        # Don't use the rudder if the player is coasting.
-        if not self.do_coast:
+        # Only use the rudder if the player is thrusting or turning.
+        if self.do_thrust or self.turn_direction != 0:
             target_velocity = vec.norm(self.direction, self.speed)
             rudder_force = vec.vfrom(self.velocity, target_velocity)
             rudder_force = vec.mul(rudder_force, c.player_rudder_strength)
             force = vec.add(force, rudder_force)
 
         super(Player, self).update(elapsed_seconds, force)
+
+    def rebound(self, *args, **kwargs):
+        v_initial = self.velocity
+        super(Player, self).rebound(*args, **kwargs)
+        v_final = self.velocity
+
+        # Apply damage based on the difference in momentum.
+        v_diff = vec.sub(v_final, v_initial)
+        self.damage += vec.mag(v_diff) * self.mass

@@ -6,7 +6,7 @@ import levels
 
 # constants #
 MAXFPS = 1000
-SCREENSIZE = (800, 600)
+SCREENSIZE = (1024, 768)
 
 def main():
     pg.init()

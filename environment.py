@@ -48,6 +48,15 @@ class Environment(object):
         for o in self.particles:
             o.update(elapsed_seconds)
 
+        # Check whether a player has won.
+        for i, p in enumerate(self.players):
+            if not p.dead and p.damage > c.player_health:
+                print('Player {} is dead.'.format(i))
+                p.dead = True
+                self.objects.remove(p)
+                self.particles.remove(p)
+
+
 def every_pair(iterable):
     """An iterator through every pair in iterable
 

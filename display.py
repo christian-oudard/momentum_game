@@ -1,7 +1,10 @@
+from __future__ import division
+
 import pygame as pg
 
 import vec
 from graphics import Graphics
+import constants as c
 
 # debug switches #
 SHOW_JOYSTICK = True
@@ -42,6 +45,8 @@ class Display(object):
         if SHOW_INFO:
             self.fps = 0.0
             self.widgets.append(InfoWidget(self))
+
+        self.widgets.append(HealthWidget(self, self.environment.players))
 
         self.graphics = Graphics(self)
 
@@ -145,4 +150,53 @@ class JoystickWidget(object):
         _width, height = self.display.screen_size
         x = 10 + 30 * self.number
         y = height - self.surface.get_height() - 10
+        screen.blit(self.surface, (x, y))
+
+class HealthWidget(object):
+    yellow = (255, 255, 0)
+    red = (255, 0, 0)
+
+    bar_width = 275
+    bar_height = 25
+    bar_separation = 50
+
+    def __init__(self, display, players):
+        self.display = display
+        self.players = players
+        self.surface = pg.Surface(
+            (self.bar_width * 2 + self.bar_separation, self.bar_height),
+            pg.SRCALPHA, 32)
+
+    def draw(self, screen):
+        self.surface.lock()
+        # Bar 1
+        pg.draw.rect(
+            self.surface,
+            self.yellow,
+            (0, 0, self.bar_width, self.bar_height),
+        )
+        fill = int(((c.player_health - self.players[1].damage) / c.player_health) * self.bar_width)
+        pg.draw.rect(
+            self.surface,
+            self.red,
+            (0, 0, fill, 30),
+        )
+        # Bar 2
+        bar2_left = self.bar_width + self.bar_separation
+        pg.draw.rect(
+            self.surface,
+            self.yellow,
+            (bar2_left, 0, self.bar_width, self.bar_height),
+        )
+        fill = int(((c.player_health - self.players[0].damage) / c.player_health) * self.bar_width)
+        pg.draw.rect(
+            self.surface,
+            self.red,
+            (bar2_left + self.bar_width - fill, 0, fill, self.bar_height),
+        )
+        self.surface.unlock()
+
+        screen_width, _screen_height = self.display.screen_size
+        x = screen_width // 2 - self.surface.get_width() // 2
+        y = 10
         screen.blit(self.surface, (x, y))

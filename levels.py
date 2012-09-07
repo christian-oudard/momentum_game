@@ -1,3 +1,4 @@
+import math
 from particle import Particle
 from player import Player
 from wall import Wall
@@ -19,8 +20,8 @@ level0 = [
 ]
 
 level1 = [
-    (Player, dict(pos=(10,10), velocity=(0,0), mass=1.0, radius=1.0)),
-    (Player, dict(pos=(-10,-10), velocity=(0,0), mass=1.0, radius=1.0)),
+    (Player, dict(pos=(6,6), heading=math.pi*-3/4, velocity=(0,0), mass=1.0, radius=1.0)),
+    (Player, dict(pos=(-6,-6), heading=math.pi*1/4, velocity=(0,0), mass=1.0, radius=1.0)),
     (Particle, dict(pos=(0,0),velocity=(0,0), mass=10)),
     (Particle, dict(pos=(5, -5),velocity=(0,0), mass=5)),
     (Particle, dict(pos=(-5, 5),velocity=(0,0), mass=5)),
@@ -31,5 +32,7 @@ level1 = [
     (Wall, [(-20,-20), (-20,20)]),
     (Wall, [(-20,20), (20,20)]),
     (Wall, [(20,20), (20,-20)]),
-    (Wall, [(20,-20), (-20, -20)]),
+    (Wall, [(20,-20), (-20,-20)]),
+    (Wall, [(-12,-8), (-8,-12)]),
+    (Wall, [(12,8), (8,12)]),
 ]

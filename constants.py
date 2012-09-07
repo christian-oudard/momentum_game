@@ -23,7 +23,7 @@ player_start_turn_time = 0.25 # seconds
 player_turn_rate = 1.0 # full rotations / second
 player_turn_rate_radians = player_turn_rate * (2 * math.pi)
 
-player_braking_strength = 30.0
+player_braking_strength = 20.0
 player_minimum_brake_speed = 0.1
 player_thrust_curve = [
     # Player thrust strength varies based on the current speed.
@@ -36,8 +36,10 @@ player_thrust_curve = [
 ]
 
 player_boost_ready_time = 0.4 # seconds
-player_boost_time = 0.05 # seconds
-player_boost_strength = 1500.0
+player_boost_time = 0.075 # seconds
+player_boost_strength = 1200.0
 player_boost_heavy_time = 0.5 # seconds
-player_boost_heavy_multiplier = 5.0
+player_boost_heavy_multiplier = 6.0
 player_boost_restitution = 1.3
+
+player_health = 500
