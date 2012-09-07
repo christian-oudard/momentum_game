@@ -21,7 +21,11 @@ class Particle(object):
         if radius is None:
             radius = math.sqrt(self.mass)
         self.radius = radius
-        
+
+    @property
+    def speed(self):
+        return vec.mag(self.velocity)
+
     def update(self, elapsed_seconds, force=None):
         # Apply force if necessary.
         if force is not None:
@@ -33,9 +37,8 @@ class Particle(object):
         # Apply drag.
         # Decrease the magnitude of the velocity vector by
         # the amount of drag.
-        speed = vec.mag(self.velocity)
         drag = c.drag_rate * elapsed_seconds
-        if drag > speed:
+        if drag > self.speed:
             self.velocity = (0, 0)
         elif drag != 0 and self.velocity != (0, 0):
             drag_vector = vec.norm(self.velocity, -drag)
@@ -45,8 +48,7 @@ class Particle(object):
             )
 
         # Limit to maximum speed.
-        speed = vec.mag(self.velocity)
-        if speed > c.max_speed:
+        if self.speed > c.max_speed:
             self.velocity = vec.norm(self.velocity, c.max_speed)
 
         # Update position based on velocity.
@@ -77,7 +79,7 @@ class Particle(object):
 def intersect(p1, p2):
     distance2 = vec.mag2(vec.vfrom(p1.pos, p2.pos))
     return distance2 <= (p1.radius + p2.radius)**2
-    
+
 def collide_particles(p1, p2, restitution = 1):
     # Test if p1 and p2 are actually intersecting.
     if not intersect(p1, p2):
@@ -85,7 +87,7 @@ def collide_particles(p1, p2, restitution = 1):
 
     # Vector spanning between the centers, normal to contact surface.
     v_span = vec.vfrom(p1.pos, p2.pos)
-    
+
     # Split into normal and tangential components.
     normal = vec.norm(v_span)
     tangent = vec.perp(normal)
@@ -100,16 +102,16 @@ def collide_particles(p1, p2, restitution = 1):
     # they don't get stuck inside one another.
     if p1_initial - p2_initial < 0:
         return
-    
+
     # Elastic collision equations along normal component.
     m1, m2 = p1.mass, p2.mass
     m1plusm2 = (m1 + m2) / restitution
     p1_final = (
-        p1_initial * (m1 - m2) / m1plusm2 + 
+        p1_initial * (m1 - m2) / m1plusm2 +
         p2_initial * (2 * m2) / m1plusm2
     )
     p2_final = (
-        p2_initial * (m2 - m1) / m1plusm2 + 
+        p2_initial * (m2 - m1) / m1plusm2 +
         p1_initial * (2 * m1) / m1plusm2
     )
 

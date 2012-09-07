@@ -3,6 +3,7 @@ from __future__ import division
 import math
 import pygame as pg
 import vec
+import constants as c
 
 # Colors.
 PARTICLE_COLOR = (64, 64, 64)
@@ -34,10 +35,26 @@ class Graphics(object):
                 vec.norm(player.direction, -1.5 * player.radius),
             )
             self.line(THRUST_COLOR, player.pos, trailing_point, .5 * player.radius)
+        if player.boost_time_remaining > 0.0:
+            trailing_point = vec.add(
+                player.pos,
+                vec.norm(player.direction, -2.0 * player.radius),
+            )
+            self.line(THRUST_COLOR, player.pos, trailing_point, 1.5 * player.radius)
 
-        # Show braking.
+        # Show braking and boosting charge up.
         if player.do_brake:
-            self.circle(BRAKE_COLOR, player.pos, 1.2 * player.radius)
+            # Redden the brake color as we charge.
+            color = vec.add(
+                BRAKE_COLOR,
+                vec.mul(THRUST_COLOR, player.boost_charge_time / c.player_boost_ready_time)
+            )
+            # Vibrate if we are fully charged.
+            r = 1.2
+            if player.boost_charge_time == c.player_boost_ready_time:
+                r += 0.1 * math.sin(6 * (2*math.pi) * pg.time.get_ticks() / 1000)
+            self.circle(color, player.pos, r)
+
 
         self.draw_particle(player)
 

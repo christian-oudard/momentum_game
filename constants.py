@@ -24,7 +24,7 @@ player_turn_rate = 1.0 # full rotations / second
 player_turn_rate_radians = player_turn_rate * (2 * math.pi)
 
 player_braking_strength = 30.0
-player_minimum_brake_speed = 0.5
+player_minimum_brake_speed = 0.1
 player_thrust_curve = [
     # Player thrust strength varies based on the current speed.
     (5.0, 55.0),
@@ -34,3 +34,7 @@ player_thrust_curve = [
     (30.0, 5.0),
     (None, 0.1),
 ]
+
+player_boost_ready_time = 0.5 # seconds
+player_boost_time = 0.05 # seconds
+player_boost_strength = 1000.0

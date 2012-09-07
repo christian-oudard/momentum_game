@@ -23,20 +23,41 @@ class Player(Particle):
         self.input = None
         self.heading = kwargs.pop('heading', 0) # Heading in radians.
         self.direction = heading_to_vector(self.heading)
+
+        # States
+        self.do_coast = False
+        self.do_thrust = False
+        self.do_brake = False
         self.turning_time = 0.0
+        self.boost_charge_time = 0.0
+        self.boost_time_remaining = 0.0
+
         super(Player, self).__init__(**kwargs)
 
     def set_input(self, inp):
         self.input = inp
 
-    def update_controls(self):
+    def update_state(self, elapsed_seconds):
         """
-        Interpret controller input as player state.
+        Update the player state based on controller input and timed effects.
 
         The up key thrusts, and the down key brakes.
         The left and right keys turn left and right.
+
+        Turning has a ramp up period.
+
+        Holding the brake key charges up a boost.
         """
+        prev_do_brake = self.do_brake
+
+        # Turning.
         self.turn_direction = self.input.x_axis
+        if self.turn_direction == 0:
+            self.turning_time = 0.0
+        else:
+            self.turning_time += elapsed_seconds
+
+        # Forward and back movement.
         if self.input.y_axis == +1:
             # Thrust.
             self.do_thrust = True
@@ -56,15 +77,31 @@ class Player(Particle):
             self.turn_direction == 0
         )
 
+        # Trigger boost by releasing the brake key once charged.
+        if (
+            prev_do_brake and not self.do_brake and
+            self.boost_charge_time >= c.player_boost_ready_time
+        ):
+            self.boost_time_remaining = c.player_boost_time
+
+        # Time out boost state.
+        self.boost_time_remaining -= elapsed_seconds
+        self.boost_time_remaining = max(self.boost_time_remaining, 0.0)
+
+        # Charge boost by holding the brake key.
+        if self.do_brake and self.speed < c.player_minimum_brake_speed:
+            self.boost_charge_time += elapsed_seconds
+            self.boost_charge_time = min(
+                self.boost_charge_time,
+                c.player_boost_ready_time,
+            )
+        else:
+            self.boost_charge_time = 0.0
+
     def update(self, elapsed_seconds, force=None):
-        self.update_controls()
+        self.update_state(elapsed_seconds)
 
         # Handle turning.
-        if self.turn_direction == 0:
-            self.turning_time = 0.0
-        else:
-            self.turning_time += elapsed_seconds
-
         if self.turning_time >= c.player_start_turn_time:
             turn_rate = c.player_turn_rate_radians
         else:
@@ -78,30 +115,36 @@ class Player(Particle):
         self.direction = heading_to_vector(self.heading)
 
         # Handle thrust and brake.
-        speed = vec.mag(self.velocity)
         force = (0, 0)
         if self.do_thrust:
             # We vary the thrust depending on how fast the player is
             # already moving.
-            thrust = curve_value(speed, c.player_thrust_curve)
+            thrust = curve_value(self.speed, c.player_thrust_curve)
             force = vec.add(
                 force,
                 vec.mul(self.direction, thrust),
             )
         if self.do_brake:
             # Always oppose the current velocity.
-            if speed >= c.player_minimum_brake_speed:
+            if self.speed >= c.player_minimum_brake_speed:
                 force = vec.add(
                     force,
                     vec.norm(self.velocity, -c.player_braking_strength),
                 )
+
+        # Handle boost.
+        if self.boost_time_remaining > 0.0:
+            force = vec.add(
+                force,
+                vec.mul(self.direction, c.player_boost_strength),
+            )
 
         # Handle rudder. We continuously bring the direction of the
         # player's movement to be closer in line with the direction
         # it is facing.
         # Don't use the rudder if the player is coasting.
         if not self.do_coast:
-            target_velocity = vec.norm(self.direction, speed)
+            target_velocity = vec.norm(self.direction, self.speed)
             rudder_force = vec.vfrom(self.velocity, target_velocity)
             rudder_force = vec.mul(rudder_force, c.player_rudder_strength)
             force = vec.add(force, rudder_force)
