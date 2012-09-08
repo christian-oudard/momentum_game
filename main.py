@@ -6,7 +6,6 @@ import levels
 
 # constants #
 MAXFPS = 1000
-MAXFPS = 30
 SCREENSIZE = (1024, 768)
 
 def main():
@@ -22,10 +21,10 @@ def main():
             'right': pg.K_RIGHT,
         }),
         InputManager({
-            'up': pg.K_w,
-            'down': pg.K_s,
-            'left': pg.K_a,
-            'right': pg.K_d,
+            'up': pg.K_e,
+            'down': pg.K_d,
+            'left': pg.K_s,
+            'right': pg.K_f,
         }),
     ]
 

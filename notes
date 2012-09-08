@@ -17,9 +17,9 @@ theme
 - sumo? maybe
 
 player physics
-- fix minimum braking speed, still having shaking instead of stopping. maybe do a drag thing?
 - proper linear interpolation for acceleration?
 
 code
+-pylint
 
 bugs
