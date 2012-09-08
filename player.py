@@ -23,11 +23,13 @@ class Player(Particle):
         self.input = None
         self.heading = kwargs.pop('heading', 0) # Heading in radians.
         self.direction = heading_to_vector(self.heading)
+        self.rudder_force = (0, 0)
 
         # States
         self.do_coast = False
         self.do_thrust = False
         self.do_brake = False
+        self.turn_direction = 0
         self.turning_time = 0.0
         self.boost_charge_time = 0.0
         self.boost_time_remaining = 0.0
