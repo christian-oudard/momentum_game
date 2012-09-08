@@ -12,9 +12,10 @@ drag_rate = 0.5
 # Collision restitution.
 restitution_wall = 0.6
 restitution_particle = 1.0
+restitution_bumper = 1.5
 
 ## Player physics.
-player_rudder_strength = 4.0 # force / speed
+player_rudder_strength = 5.0 # force / speed
 player_max_rudder_strength = 40.0 # force
 
 player_start_turn_rate = 0.1 # full rotations / second

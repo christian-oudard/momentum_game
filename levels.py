@@ -1,9 +1,10 @@
 import math
 from particle import Particle
+from bumper import Bumper
 from player import Player
 from wall import Wall
 
-level0 = [
+test = [
     (Player, dict(pos=(2,2), velocity=(0,0), mass=1.0, radius=1.0)),
     (Particle, dict(pos=(0,3),velocity=(-1,3), mass=1)),
     (Particle, dict(pos=(-5,0),velocity=(-1,2), mass=.25)),
@@ -19,7 +20,7 @@ level0 = [
     (Wall, [(15,13), (0,8)]),
 ]
 
-level1 = [
+versus = [
     (Player, dict(pos=(6,6), heading=math.pi*-3/4, velocity=(0,0), mass=1.0, radius=1.0)),
     (Player, dict(pos=(-6,-6), heading=math.pi*1/4, velocity=(0,0), mass=1.0, radius=1.0)),
     (Particle, dict(pos=(0,0),velocity=(0,0), mass=10)),
@@ -29,6 +30,17 @@ level1 = [
     (Particle, dict(pos=(-10, 10),velocity=(0,0), mass=2)),
     (Particle, dict(pos=(15, -15),velocity=(0,0), mass=.5)),
     (Particle, dict(pos=(-15, 15),velocity=(0,0), mass=.5)),
+    (Wall, [(-20,-20), (-20,20)]),
+    (Wall, [(-20,20), (20,20)]),
+    (Wall, [(20,20), (20,-20)]),
+    (Wall, [(20,-20), (-20,-20)]),
+    (Wall, [(-12,-8), (-8,-12)]),
+    (Wall, [(12,8), (8,12)]),
+]
+
+bumper_test = [
+    (Player, dict(pos=(6,6), heading=math.pi*-3/4, velocity=(0,0), mass=1.0, radius=1.0)),
+    (Bumper, dict(pos=(0,0),velocity=(0,0), radius=3)),
     (Wall, [(-20,-20), (-20,20)]),
     (Wall, [(-20,20), (20,20)]),
     (Wall, [(20,20), (20,-20)]),

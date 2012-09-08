@@ -7,6 +7,7 @@ import constants as c
 class Particle(object):
     graphics_type = 'particle'
     restitution = c.restitution_particle
+    immovable = False
 
     def __init__(
         self,
@@ -82,22 +83,38 @@ def intersect(p1, p2):
     return distance2 <= (p1.radius + p2.radius)**2
 
 def collide_particles(p1, p2, restitution = 1):
+    # Don't collide immovable particles.
+    if p1.immovable and p2.immovable:
+        return
+
     # Test if p1 and p2 are actually intersecting.
     if not intersect(p1, p2):
         return
 
+    # If one particle is immovable, make it the first one.
+    if not p1.immovable and p2.immovable:
+        p1, p2 = p2, p1
+
     # Vector spanning between the centers, normal to contact surface.
     v_span = vec.vfrom(p1.pos, p2.pos)
 
-    # Split into normal and tangential components.
+    # Split into normal and tangential components and calculate
+    # initial velocities.
     normal = vec.norm(v_span)
     tangent = vec.perp(normal)
     v1_tangent = vec.proj(p1.velocity, tangent)
     v2_tangent = vec.proj(p2.velocity, tangent)
-
-    # Calculate initial velocities.
     p1_initial = vec.dot(p1.velocity, normal)
     p2_initial = vec.dot(p2.velocity, normal)
+
+    # Handle immovable particles specially.
+    if p1.immovable:
+        p2_final = -p2_initial * restitution
+        p2.velocity = vec.add(
+            v2_tangent,
+            vec.mul(normal, p2_final),
+        )
+        return
 
     # Don't collide if particles were actually moving away from each other, so
     # they don't get stuck inside one another.

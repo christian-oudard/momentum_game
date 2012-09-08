@@ -169,18 +169,19 @@ class HealthWidget(object):
 
     def draw(self, screen):
         self.surface.lock()
-        # Bar 1
-        pg.draw.rect(
-            self.surface,
-            self.yellow,
-            (0, 0, self.bar_width, self.bar_height),
-        )
-        fill = int(((c.player_health - self.players[1].damage) / c.player_health) * self.bar_width)
-        pg.draw.rect(
-            self.surface,
-            self.red,
-            (0, 0, fill, 30),
-        )
+        if len(self.players) >= 2:
+            # Bar 1
+            pg.draw.rect(
+                self.surface,
+                self.yellow,
+                (0, 0, self.bar_width, self.bar_height),
+            )
+            fill = int(((c.player_health - self.players[1].damage) / c.player_health) * self.bar_width)
+            pg.draw.rect(
+                self.surface,
+                self.red,
+                (0, 0, fill, 30),
+            )
         # Bar 2
         bar2_left = self.bar_width + self.bar_separation
         pg.draw.rect(

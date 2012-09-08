@@ -170,14 +170,15 @@ class Player(Particle):
 
         # The strength of the rudder is highest when acting perpendicular to
         # the direction of movement.
-        v_perp = vec.perp(self.velocity)
-        strength = abs(vec.dot(v_perp, self.direction)) * c.player_rudder_strength
+        v_perp = vec.norm(vec.perp(self.velocity))
+        angle_multiplier = abs(vec.dot(v_perp, self.direction))
+        strength = self.speed * c.player_rudder_strength
         strength = min(strength, c.player_max_rudder_strength)
+        strength *= angle_multiplier
         if strength == 0:
             return (0, 0)
 
         force = vec.norm(force, strength)
-        self.rudder_force_display = force
         return force
 
     def rebound(self, *args, **kwargs):

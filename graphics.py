@@ -27,12 +27,16 @@ class Graphics(object):
         drawing_functions = {
             'player': self.draw_player,
             'particle': self.draw_particle,
+            'bumper': self.draw_bumper,
             'wall': self.draw_wall,
         }
         drawing_functions[obj.graphics_type](obj)
 
     def draw_particle(self, particle):
         self.circle(PARTICLE_COLOR, particle.pos, particle.radius)
+
+    def draw_bumper(self, bumper):
+        self.circle(PARTICLE_COLOR, bumper.pos, bumper.radius, width=.2 * bumper.radius)
 
     def draw_player(self, player):
         # Show whether or not the player is thrusting.
@@ -93,10 +97,11 @@ class Graphics(object):
             max(1, int(width * self.display.pixels_per_unit)),
         )
 
-    def circle(self, color, center, radius):
+    def circle(self, color, center, radius, width=0):
         pg.draw.circle(
             self.display.screen,
             color,
             self.display.to_screen(center),
             int(radius * self.display.pixels_per_unit),
+            int(width * self.display.pixels_per_unit),
         )
