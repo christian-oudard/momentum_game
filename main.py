@@ -31,7 +31,7 @@ def main():
 
     env = Environment(inputs)
     disp = Display(env, SCREENSIZE)
-    env.load_level(levels.bumper_test) # TEMP, hardcoded level selection.
+    env.load_level(levels.versus) # TEMP, hardcoded level selection.
 
     # FPS tracking.
     update_fps_event = pg.USEREVENT + 1

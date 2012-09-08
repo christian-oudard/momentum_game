@@ -23,7 +23,7 @@ test = [
 versus = [
     (Player, dict(pos=(6,6), heading=math.pi*-3/4, velocity=(0,0), mass=1.0, radius=1.0)),
     (Player, dict(pos=(-6,-6), heading=math.pi*1/4, velocity=(0,0), mass=1.0, radius=1.0)),
-    (Particle, dict(pos=(0,0),velocity=(0,0), mass=10)),
+    (Bumper, dict(pos=(0,0),velocity=(0,0), radius=3)),
     (Particle, dict(pos=(5, -5),velocity=(0,0), mass=5)),
     (Particle, dict(pos=(-5, 5),velocity=(0,0), mass=5)),
     (Particle, dict(pos=(10, -10),velocity=(0,0), mass=2)),

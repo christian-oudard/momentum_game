@@ -6,7 +6,7 @@ import vec
 import constants as c
 
 # Debug switches.
-SHOW_RUDDER_FORCE = True
+SHOW_RUDDER_FORCE = False
 
 # Colors.
 PARTICLE_COLOR = (64, 64, 64)
