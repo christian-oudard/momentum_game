@@ -11,6 +11,10 @@ WALL_COLOR = (32, 32, 32)
 DIRECTION_COLOR = (255, 255, 255)
 THRUST_COLOR = (196, 32, 32)
 BRAKE_COLOR = (16, 16, 16)
+PLAYER_COLORS = [
+    (48, 48, 128),
+    (128, 128, 48),
+]
 
 class Graphics(object):
     def __init__(self, display):
@@ -55,8 +59,8 @@ class Graphics(object):
                 r += 0.1 * math.sin(6 * (2*math.pi) * pg.time.get_ticks() / 1000)
             self.circle(color, player.pos, r)
 
-
-        self.draw_particle(player)
+        # Body.
+        self.circle(PLAYER_COLORS[player.number], player.pos, player.radius)
 
         # Show the player pointing towards a direction.
         leading_point = vec.add(

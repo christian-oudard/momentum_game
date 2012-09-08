@@ -27,8 +27,10 @@ class Environment(object):
             if isinstance(obj, Wall):
                 self.walls.append(obj)
 
-        for inp, player in zip(self.inputs, self.players):
-            player.set_input(inp)
+        for inp, p in zip(self.inputs, self.players):
+            p.set_input(inp)
+        for i, p in enumerate(self.players):
+            p.number = i
 
     def update(self, elapsed_ticks):
         elapsed_seconds = elapsed_ticks / 1000
@@ -49,9 +51,9 @@ class Environment(object):
             o.update(elapsed_seconds)
 
         # Check whether a player has won.
-        for i, p in enumerate(self.players):
+        for p in self.players:
             if not p.dead and p.damage > c.player_health:
-                print('Player {} is dead.'.format(i))
+                print('Player {} is dead.'.format(p.number + 1))
                 p.dead = True
                 self.objects.remove(p)
                 self.particles.remove(p)

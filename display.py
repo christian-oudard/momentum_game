@@ -87,10 +87,10 @@ class InfoWidget(object):
         lines = [
             '{:.0f} fps'.format(self.display.fps),
         ]
-        for i, p in enumerate(self.display.environment.players):
+        for p in self.display.environment.players:
             lines.append(
                 'player {} speed: {:.1f}'.format(
-                    i + 1,
+                    p.number + 1,
                     vec.mag(p.velocity),
                 )
             )
