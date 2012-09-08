@@ -150,17 +150,35 @@ class Player(Particle):
             self.mass = self.original_mass
             self.restitution = c.restitution_particle
 
-        # Handle rudder. We continuously bring the direction of the
-        # player's movement to be closer in line with the direction
-        # it is facing.
-        # Only use the rudder if the player is thrusting or turning.
-        if self.do_thrust or self.turn_direction != 0:
-            target_velocity = vec.norm(self.direction, self.speed)
-            rudder_force = vec.vfrom(self.velocity, target_velocity)
-            rudder_force = vec.mul(rudder_force, c.player_rudder_strength)
-            force = vec.add(force, rudder_force)
+        # Handle rudder.
+        self.rudder_force = (0, 0)
+        if self.velocity != (0, 0):
+            # Only use the rudder if the player is thrusting or turning.
+            if self.do_thrust or self.turn_direction != 0:
+                self.rudder_force = self.calc_rudder_force()
+                force = vec.add(force, self.rudder_force)
 
         super(Player, self).update(elapsed_seconds, force)
+
+    def calc_rudder_force(self):
+        # We continuously bring the direction of the player's movement to be
+        # closer in line with the direction it is facing.
+        target_velocity = vec.norm(self.direction, self.speed)
+        force = vec.vfrom(self.velocity, target_velocity)
+        if force == (0, 0):
+            return (0, 0)
+
+        # The strength of the rudder is highest when acting perpendicular to
+        # the direction of movement.
+        v_perp = vec.perp(self.velocity)
+        strength = abs(vec.dot(v_perp, self.direction)) * c.player_rudder_strength
+        strength = min(strength, c.player_max_rudder_strength)
+        if strength == 0:
+            return (0, 0)
+
+        force = vec.norm(force, strength)
+        self.rudder_force_display = force
+        return force
 
     def rebound(self, *args, **kwargs):
         v_initial = self.velocity

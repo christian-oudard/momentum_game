@@ -6,6 +6,7 @@ import levels
 
 # constants #
 MAXFPS = 1000
+MAXFPS = 30
 SCREENSIZE = (1024, 768)
 
 def main():

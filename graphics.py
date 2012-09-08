@@ -5,6 +5,9 @@ import pygame as pg
 import vec
 import constants as c
 
+# Debug switches.
+SHOW_RUDDER_FORCE = True
+
 # Colors.
 PARTICLE_COLOR = (64, 64, 64)
 WALL_COLOR = (32, 32, 32)
@@ -68,6 +71,13 @@ class Graphics(object):
             vec.norm(player.direction, player.radius),
         )
         self.line(DIRECTION_COLOR, player.pos, leading_point, .2 * player.radius)
+
+        if SHOW_RUDDER_FORCE:
+            leading_point = vec.add(
+                player.pos,
+                vec.mul(player.rudder_force, .1),
+            )
+            self.line(THRUST_COLOR, player.pos, leading_point, .1 * player.radius)
 
     def draw_wall(self, wall):
         self.line(WALL_COLOR, wall.p1, wall.p2, .25)

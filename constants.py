@@ -14,17 +14,17 @@ restitution_wall = 0.6
 restitution_particle = 1.0
 
 ## Player physics.
-
-player_rudder_strength = 3.0
+player_rudder_strength = 4.0 # force / speed
+player_max_rudder_strength = 40.0 # force
 
 player_start_turn_rate = 0.1 # full rotations / second
 player_start_turn_rate_radians = player_start_turn_rate * (2 * math.pi)
 player_start_turn_time = 0.25 # seconds
-player_turn_rate = 1.0 # full rotations / second
+player_turn_rate = 0.75 # full rotations / second
 player_turn_rate_radians = player_turn_rate * (2 * math.pi)
 
 player_braking_strength = 20.0
-player_minimum_brake_speed = 0.1
+player_minimum_brake_speed = 0.2
 player_thrust_curve = [
     # Player thrust strength varies based on the current speed.
     (5.0, 55.0),
