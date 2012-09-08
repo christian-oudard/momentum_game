@@ -28,7 +28,7 @@ class Particle(object):
     def speed(self):
         return vec.mag(self.velocity)
 
-    def update(self, elapsed_seconds, force=None):
+    def update(self, elapsed_seconds, force=None, extra_drag=0):
         # Apply force if necessary.
         if force is not None:
             self.velocity = vec.add(
@@ -39,7 +39,7 @@ class Particle(object):
         # Apply drag.
         # Decrease the magnitude of the velocity vector by
         # the amount of drag.
-        drag = c.drag_rate * elapsed_seconds
+        drag = (c.drag_rate + extra_drag) * elapsed_seconds
         if drag > self.speed:
             self.velocity = (0, 0)
         elif drag != 0 and self.velocity != (0, 0):

@@ -93,7 +93,7 @@ class Player(Particle):
         self.boost_heavy_time_remaining = max(self.boost_heavy_time_remaining, 0.0)
 
         # Charge boost by holding the brake key.
-        if self.do_brake and self.speed < c.player_minimum_brake_speed:
+        if self.do_brake and self.speed == 0:
             self.boost_charge_time += elapsed_seconds
             self.boost_charge_time = min(
                 self.boost_charge_time,
@@ -102,7 +102,7 @@ class Player(Particle):
         else:
             self.boost_charge_time = 0.0
 
-    def update(self, elapsed_seconds, force=None):
+    def update(self, elapsed_seconds, force=None, extra_drag=0):
         self.update_state(elapsed_seconds)
 
         # Handle turning.
@@ -118,7 +118,7 @@ class Player(Particle):
         self.heading += self.turn_direction * turn_rate * elapsed_seconds
         self.direction = heading_to_vector(self.heading)
 
-        # Handle thrust and brake.
+        # Handle thrust.
         force = (0, 0)
         if self.do_thrust:
             # We vary the thrust depending on how fast the player is
@@ -128,13 +128,11 @@ class Player(Particle):
                 force,
                 vec.mul(self.direction, thrust),
             )
+
+        # Handle braking.
+        extra_drag = 0
         if self.do_brake:
-            # Always oppose the current velocity.
-            if self.speed >= c.player_minimum_brake_speed:
-                force = vec.add(
-                    force,
-                    vec.norm(self.velocity, -c.player_braking_strength),
-                )
+            extra_drag = c.player_braking_drag
 
         # Handle boost.
         if self.boost_time_remaining > 0.0:
@@ -158,7 +156,7 @@ class Player(Particle):
                 self.rudder_force = self.calc_rudder_force()
                 force = vec.add(force, self.rudder_force)
 
-        super(Player, self).update(elapsed_seconds, force)
+        super(Player, self).update(elapsed_seconds, force, extra_drag)
 
     def calc_rudder_force(self):
         # We continuously bring the direction of the player's movement to be
