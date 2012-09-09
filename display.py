@@ -7,7 +7,7 @@ from graphics import Graphics
 import constants as c
 
 # debug switches #
-SHOW_JOYSTICK = True
+SHOW_JOYSTICK = False
 SHOW_INFO = True
 
 # constants #

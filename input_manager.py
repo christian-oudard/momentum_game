@@ -4,62 +4,55 @@ class InputManager(object):
     """Manager class for keyboard and joystick input
 
     Handles tracking of keyboard state, and mapping of keys and joystick
-    buttons to game inputs. Keeps an internal model of the joystick
-    axes, each having values of 1, 0, or -1.
+    buttons to game inputs.
 
-    Properties:
-    x_axis -- -1 for left, +1 for right, 0 for neutral
-    y_axis -- -1 for down, +1 for up, 0 for neutral
+    Keeps an internal model of any axes defined, with values of 1, 0, or -1.
+
+    The keymap is a dictionary mapping button names to a single key, or axis
+    names to a pair of keys for the negative and positive direction.
     """
 
     def __init__(self, keymap):
-        self.keymap = keymap
-        self.x_axis = 0
-        self.y_axis = 0
-        self.right_last = True
-        self.up_last = True
+        # For each axis, we use key events to track the last direction that was
+        # pressed, to disambiguate when both keys are pressed at once.
+        # Initialize the list of axis names, the axis readout attributes, and
+        # the last known direction.
+        self.buttons = {}
+        self.axes = {}
+        self.axes_last = {}
+        for key, value in keymap.items():
+            if isinstance(value, tuple):
+                self.axes[key] = value
+                setattr(self, key, 0)
+                self.axes_last[key] = False
+            else:
+                self.buttons[key] = value
 
     def track_keypress(self, key):
-        if key == self.keymap['up']:
-            self.up_last = True
-        elif key == self.keymap['down']:
-            self.up_last = False
-        elif key == self.keymap['right']:
-            self.right_last = True
-        elif key == self.keymap['left']:
-            self.right_last = False
+        for axis, keys in self.axes.items():
+            if key == keys[0]:
+                self.axes_last[axis] = -1
+            elif key == keys[1]:
+                self.axes_last[axis] = +1
 
     def update(self):
-        keys = pg.key.get_pressed()
+        pressed_keys = pg.key.get_pressed()
 
-        # check x-axis
-        right_key = keys[self.keymap['right']]
-        left_key = keys[self.keymap['left']]
-
-        if not right_key and not left_key:
-            self.x_axis = 0
-        elif right_key and not left_key:
-            self.x_axis = +1
-        elif not right_key and left_key:
-            self.x_axis = -1
-        else:
-            if self.right_last:
-                self.x_axis = +1
+        # Check axis values.
+        for axis, keys in self.axes.items():
+            neg = pressed_keys[keys[0]]
+            pos = pressed_keys[keys[1]]
+            if not pos and not neg:
+                value = 0
+            elif pos and not neg:
+                value = +1
+            elif neg and not pos:
+                value = -1
             else:
-                self.x_axis = -1
+                value = self.axes_last[axis]
+            setattr(self, axis, value)
 
-        # check y-axis
-        up_key = keys[self.keymap['up']]
-        down_key = keys[self.keymap['down']]
-
-        if not up_key and not down_key:
-            self.y_axis = 0
-        elif up_key and not down_key:
-            self.y_axis = +1
-        elif not up_key and down_key:
-            self.y_axis = -1
-        else:
-            if self.up_last:
-                self.y_axis = +1
-            else:
-                self.y_axis = -1
+        # Check button values.
+        for button, key in self.buttons.items():
+            value = bool(pressed_keys[key])
+            setattr(self, button, value)

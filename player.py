@@ -60,18 +60,18 @@ class Player(Particle):
         prev_do_brake = self.do_brake
 
         # Turning.
-        self.turn_direction = self.input.x_axis
+        self.turn_direction = self.input.turn_direction
         if self.turn_direction == 0:
             self.turning_time = 0.0
         else:
             self.turning_time += elapsed_seconds
 
         # Forward and back movement.
-        if self.input.y_axis == +1:
+        if self.input.thrust:
             # Thrust.
             self.do_thrust = True
             self.do_brake = False
-        elif self.input.y_axis == -1:
+        elif self.input.brake:
             # Brake.
             self.do_thrust = False
             self.do_brake = True
