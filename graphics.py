@@ -7,6 +7,7 @@ import constants as c
 
 # Debug switches.
 SHOW_RUDDER_FORCE = False
+SHOW_INTENDED_DIRECTION = False
 
 # Colors.
 PARTICLE_COLOR = (64, 64, 64)
@@ -77,11 +78,17 @@ class Graphics(object):
         self.line(DIRECTION_COLOR, player.pos, leading_point, .2 * player.radius)
 
         if SHOW_RUDDER_FORCE:
-            leading_point = vec.add(
+            point = vec.add(
                 player.pos,
                 vec.mul(player.rudder_force, .1),
             )
-            self.line(THRUST_COLOR, player.pos, leading_point, .1 * player.radius)
+            self.line(THRUST_COLOR, player.pos, point, .1 * player.radius)
+        if SHOW_INTENDED_DIRECTION and hasattr(player, 'intended_direction'):
+            point = vec.add(
+                player.pos,
+                player.intended_direction,
+            )
+            self.line(THRUST_COLOR, player.pos, point, .1 * player.radius)
 
     def draw_wall(self, wall):
         self.line(WALL_COLOR, wall.p1, wall.p2, .25)

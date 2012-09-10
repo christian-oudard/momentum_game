@@ -20,6 +20,7 @@ theme
 - sumo? maybe
 
 player physics
+- put back rudder any time we aren't braking?
 - proper linear interpolation for acceleration?
 
 code

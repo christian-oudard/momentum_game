@@ -14,11 +14,11 @@ def main():
 
     #TEMP: hardcoded keymaps.
     inputs = [
-        #InputManager({
-        #    'x_axis': (pg.K_LEFT, pg.K_RIGHT),
-        #    'y_axis': (pg.K_DOWN, pg.K_UP),
-        #    'brake': pg.K_RSHIFT,
-        #}),
+        InputManager({
+            'x_axis': (pg.K_LEFT, pg.K_RIGHT),
+            'y_axis': (pg.K_DOWN, pg.K_UP),
+            'brake': pg.K_RCTRL,
+        }),
         InputManager({
             'thrust': pg.K_e,
             'brake': pg.K_d,
@@ -28,7 +28,7 @@ def main():
 
     env = Environment(inputs)
     disp = Display(env, SCREENSIZE)
-    env.load_level(levels.test) # TEMP, hardcoded level selection.
+    env.load_level(levels.versus) # TEMP, hardcoded level selection.
 
     # FPS tracking.
     update_fps_event = pg.USEREVENT + 1

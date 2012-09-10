@@ -23,6 +23,7 @@ player_start_turn_rate_radians = player_start_turn_rate * (2 * math.pi)
 player_start_turn_time = 0.25 # seconds
 player_turn_rate = 0.75 # full rotations / second
 player_turn_rate_radians = player_turn_rate * (2 * math.pi)
+player_intended_turn_threshold = math.pi / 128 # radians.
 
 player_braking_drag = 20.0
 player_thrust_curve = [

@@ -46,6 +46,12 @@ class Player(Particle):
     def set_input(self, inp):
         self.input = inp
 
+    def update(self, elapsed_seconds, force=None, extra_drag=0):
+        self.update_state(elapsed_seconds)
+        force, extra_drag = self.update_physics(elapsed_seconds)
+
+        super(Player, self).update(elapsed_seconds, force, extra_drag)
+
     def update_state(self, elapsed_seconds):
         """
         Update the player state based on controller input and timed effects.
@@ -59,26 +65,13 @@ class Player(Particle):
         """
         prev_do_brake = self.do_brake
 
+        self.interpret_controls()
+
         # Turning.
-        self.turn_direction = self.input.turn_direction
         if self.turn_direction == 0:
             self.turning_time = 0.0
         else:
             self.turning_time += elapsed_seconds
-
-        # Forward and back movement.
-        if self.input.thrust:
-            # Thrust.
-            self.do_thrust = True
-            self.do_brake = False
-        elif self.input.brake:
-            # Brake.
-            self.do_thrust = False
-            self.do_brake = True
-        else:
-            # Coast.
-            self.do_thrust = False
-            self.do_brake = False
 
         # Trigger boost by releasing the brake key once charged.
         if (
@@ -104,9 +97,38 @@ class Player(Particle):
         else:
             self.boost_charge_time = 0.0
 
-    def update(self, elapsed_seconds, force=None, extra_drag=0):
-        self.update_state(elapsed_seconds)
+    def interpret_controls(self):
+        if not hasattr(self.input, 'turn_direction'):
+            # Interpret controls using x and y axis to pick a target direction,
+            # then translate into turn direction and thrust.
+            # If the player is pushing towards a direction and not braking,
+            # then it is thrusting.
+            self.do_brake = self.input.brake
+            self.turn_direction = 0
+            self.do_thrust = False
+            self.intended_direction = (self.input.x_axis, -self.input.y_axis)
+            if self.intended_direction != (0, 0):
+                if not self.do_brake:
+                    self.do_thrust = True
+                # Determine which direction we should turn to come closer to the
+                # correct one.
+                side = vec.dot(self.intended_direction, vec.perp(self.direction))
+                if (
+                    vec.angle(self.intended_direction, self.direction) <
+                    c.player_intended_turn_threshold
+                ):
+                    self.turn_direction = 0
+                elif side < 0:
+                    self.turn_direction = +1
+                elif side > 0:
+                    self.turn_direction = -1
+        else:
+            # Interpret controls using thrust, brake, and turn direction.
+            self.turn_direction = self.input.turn_direction
+            self.do_brake = self.input.brake
+            self.do_thrust = self.input.thrust and not self.do_brake
 
+    def update_physics(self, elapsed_seconds):
         # Handle turning.
         if self.turning_time >= c.player_start_turn_time:
             turn_rate = c.player_turn_rate_radians
@@ -158,7 +180,7 @@ class Player(Particle):
                 self.rudder_force = self.calc_rudder_force()
                 force = vec.add(force, self.rudder_force)
 
-        super(Player, self).update(elapsed_seconds, force, extra_drag)
+        return force, extra_drag
 
     def calc_rudder_force(self):
         # We continuously bring the direction of the player's movement to be
