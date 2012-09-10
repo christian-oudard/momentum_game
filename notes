@@ -1,8 +1,5 @@
 TODO
 gameplay
-
-- updownleftright instead of turn thrust brake
-
 1 - follow camera
 2 - zoom camera based on speed and how far apart multiple players are
 3 - large world
@@ -20,7 +17,6 @@ theme
 - sumo? maybe
 
 player physics
-- put back rudder any time we aren't braking?
 - proper linear interpolation for acceleration?
 
 code
