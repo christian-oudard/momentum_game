@@ -52,7 +52,7 @@ class Environment(object):
 
         # Check whether a player has won.
         for p in self.players:
-            if not p.dead and p.damage > c.player_health:
+            if not p.dead and p.damage > p.player_health:
                 print('Player {} is dead.'.format(p.number + 1))
                 p.dead = True
                 self.objects.remove(p)

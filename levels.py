@@ -3,6 +3,7 @@ from particle import Particle
 from bumper import Bumper
 from player import Player
 from wall import Wall
+import constants as c
 
 test = [
     (Player, dict(pos=(2,2), velocity=(0,0), mass=1.0, radius=1.0)),
@@ -21,21 +22,23 @@ test = [
 ]
 
 versus = [
-    (Player, dict(pos=(6,6), heading=math.pi*-3/4, velocity=(0,0), mass=1.0, radius=1.0)),
-    (Player, dict(pos=(-6,-6), heading=math.pi*1/4, velocity=(0,0), mass=1.0, radius=1.0)),
+    (Player, dict(pos=(6,6), heading=math.pi*-3/4, velocity=(0,0), mass=1.0, radius=1.0, player_health=250)),
+    (Player, dict(pos=(-6,-6), heading=math.pi*1/4, velocity=(0,0), mass=1.0, radius=1.0, player_health=250)),
     (Bumper, dict(pos=(0,0),velocity=(0,0), radius=3)),
     (Particle, dict(pos=(5, -5),velocity=(0,0), mass=5)),
     (Particle, dict(pos=(-5, 5),velocity=(0,0), mass=5)),
     (Particle, dict(pos=(10, -10),velocity=(0,0), mass=2)),
     (Particle, dict(pos=(-10, 10),velocity=(0,0), mass=2)),
-    (Particle, dict(pos=(15, -15),velocity=(0,0), mass=.5)),
-    (Particle, dict(pos=(-15, 15),velocity=(0,0), mass=.5)),
+    (Particle, dict(pos=(15, -15),velocity=(0,0), mass=10, radius=.5)),
+    (Particle, dict(pos=(-15, 15),velocity=(0,0), mass=10, radius=.5)),
+    (Particle, dict(pos=(15, 15),velocity=(0,0), mass=7)),
+    (Particle, dict(pos=(-15, -15),velocity=(0,0), mass=7)),
     (Wall, [(-20,-20), (-20,20)]),
     (Wall, [(-20,20), (20,20)]),
     (Wall, [(20,20), (20,-20)]),
     (Wall, [(20,-20), (-20,-20)]),
-    (Wall, [(-12,-8), (-8,-12)]),
-    (Wall, [(12,8), (8,12)]),
+    #(Wall, [(-12,-8), (-8,-12)]),
+    #(Wall, [(12,8), (8,12)]),
 ]
 
 bumper_test = [
@@ -47,4 +50,9 @@ bumper_test = [
     (Wall, [(20,-20), (-20,-20)]),
     (Wall, [(-12,-8), (-8,-12)]),
     (Wall, [(12,8), (8,12)]),
+]
+
+bumper_orbit_bug = [
+    (Bumper, dict(pos=(0,0), velocity=(0,0), radius=3)),
+    (Particle, dict(pos=(6, 0), velocity=(-1000,-1000), mass=1, radius=3.1)),
 ]

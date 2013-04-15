@@ -38,6 +38,7 @@ class Player(Particle):
         # Damage
         self.damage = 0.0
         self.dead = False
+        self.player_health = kwargs.pop('player_health', c.player_health)
 
         super(Player, self).__init__(**kwargs)
 

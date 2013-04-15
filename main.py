@@ -14,10 +14,15 @@ def main():
 
     #TEMP: hardcoded keymaps.
     inputs = [
+        #InputManager({
+        #    'x_axis': (pg.K_j, pg.K_l),
+        #    'y_axis': (pg.K_k, pg.K_i),
+        #    'brake': pg.K_SPACE,
+        #}),
         InputManager({
-            'x_axis': (pg.K_LEFT, pg.K_RIGHT),
-            'y_axis': (pg.K_DOWN, pg.K_UP),
-            'brake': pg.K_RCTRL,
+            'thrust': pg.K_i,
+            'brake': pg.K_k,
+            'turn_direction': (pg.K_j, pg.K_l),
         }),
         InputManager({
             'thrust': pg.K_e,

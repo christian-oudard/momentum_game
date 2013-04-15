@@ -176,25 +176,28 @@ class HealthWidget(object):
                 self.yellow,
                 (0, 0, self.bar_width, self.bar_height),
             )
-            fill = int(((c.player_health - self.players[1].damage) / c.player_health) * self.bar_width)
+            p1 = self.players[1]
+            fill = int(((p1.player_health - p1.damage) / p1.player_health) * self.bar_width)
             pg.draw.rect(
                 self.surface,
                 self.red,
                 (0, 0, fill, 30),
             )
-        # Bar 2
-        bar2_left = self.bar_width + self.bar_separation
-        pg.draw.rect(
-            self.surface,
-            self.yellow,
-            (bar2_left, 0, self.bar_width, self.bar_height),
-        )
-        fill = int(((c.player_health - self.players[0].damage) / c.player_health) * self.bar_width)
-        pg.draw.rect(
-            self.surface,
-            self.red,
-            (bar2_left + self.bar_width - fill, 0, fill, self.bar_height),
-        )
+        if len(self.players) >= 1:
+            # Bar 2
+            bar2_left = self.bar_width + self.bar_separation
+            pg.draw.rect(
+                self.surface,
+                self.yellow,
+                (bar2_left, 0, self.bar_width, self.bar_height),
+            )
+            p0 = self.players[0]
+            fill = int(((p0.player_health - p0.damage) / p0.player_health) * self.bar_width)
+            pg.draw.rect(
+                self.surface,
+                self.red,
+                (bar2_left + self.bar_width - fill, 0, fill, self.bar_height),
+            )
         self.surface.unlock()
 
         screen_width, _screen_height = self.display.screen_size

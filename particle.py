@@ -6,7 +6,6 @@ import constants as c
 
 class Particle(object):
     graphics_type = 'particle'
-    restitution = c.restitution_particle
     immovable = False
 
     def __init__(
@@ -15,6 +14,7 @@ class Particle(object):
         velocity=(0, 0),
         mass=1.0,
         radius=None,
+        restitution=c.restitution_particle,
     ):
         self.last_pos = pos
         self.pos = pos
@@ -23,6 +23,7 @@ class Particle(object):
         if radius is None:
             radius = math.sqrt(self.mass)
         self.radius = radius
+        self.restitution = restitution
 
     @property
     def speed(self):
