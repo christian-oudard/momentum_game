@@ -35,27 +35,32 @@ def main():
     disp = Display(env, SCREENSIZE)
     env.load_level(levels.versus) # TEMP, hardcoded level selection.
 
-    # FPS tracking.
+    main_loop(env, disp)
+
+    pg.quit()
+
+
+def main_loop(env, disp):
+    # fps tracking.
     update_fps_event = pg.USEREVENT + 1
     pg.time.set_timer(update_fps_event, 700)
 
     # vars #
-    done = False
     clock = pg.time.Clock()
     clock.tick()  # necessary, or the first tick will be very large
 
     # program loop #
-    while not done:
+    while True:
         # events #
         for e in pg.event.get():
             if e.type == pg.QUIT:
-                done = True
+                return
             elif e.type == pg.KEYDOWN:
                 key = e.key
                 if key == pg.K_ESCAPE:
                     pg.event.post(pg.event.Event(pg.QUIT))
                 else:
-                    for inp in inputs:
+                    for inp in env.inputs:
                         inp.track_keypress(e.key)
             elif e.type == pg.MOUSEMOTION:
                 pass
@@ -67,7 +72,7 @@ def main():
                 disp.set_fps(clock.get_fps())
 
         # updates #
-        for inp in inputs:
+        for inp in env.inputs:
             inp.update()
         elapsedticks = clock.get_time()
         env.update(elapsedticks)
@@ -78,9 +83,6 @@ def main():
         # tick #
         clock.tick(MAXFPS)
 
-    # end program loop #
-
-    pg.quit()
 
 if __name__ == '__main__':
     main()

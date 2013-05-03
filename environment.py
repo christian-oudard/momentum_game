@@ -6,7 +6,9 @@ from wall import Wall
 import constants as c
 
 class Environment(object):
-    def __init__(self, inputs):
+    def __init__(self, inputs=None):
+        if inputs is None:
+            inputs = []
         self.inputs = inputs
         self.objects = []
         self.players = []
