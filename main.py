@@ -20,14 +20,14 @@ def main():
         #    'brake': pg.K_SPACE,
         #}),
         InputManager({
-            'thrust': pg.K_i,
-            'brake': pg.K_k,
-            'turn_direction': (pg.K_j, pg.K_l),
+            'thrust': pg.K_UP,
+            'brake': pg.K_DOWN,
+            'turn_direction': (pg.K_LEFT, pg.K_RIGHT),
         }),
         InputManager({
-            'thrust': pg.K_e,
-            'brake': pg.K_d,
-            'turn_direction': (pg.K_s, pg.K_f),
+            'thrust': pg.K_PERIOD,
+            'brake': pg.K_e,
+            'turn_direction': (pg.K_o, pg.K_u),
         }),
     ]
 
