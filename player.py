@@ -43,6 +43,7 @@ class Player(Particle):
         super(Player, self).__init__(**kwargs)
 
         self.original_mass = self.mass
+        self.original_restitution = self.restitution
 
     def set_input(self, inp):
         self.input = inp
@@ -168,10 +169,13 @@ class Player(Particle):
         # Get heavy while boosting.
         if self.boost_heavy_time_remaining > 0.0:
             self.mass = self.original_mass * c.player_boost_heavy_multiplier
-            self.restitution = c.player_boost_restitution
+            self.restitution = (
+                self.original_restitution *
+                c.player_boost_restitution_multiplier
+            )
         else:
             self.mass = self.original_mass
-            self.restitution = c.restitution_particle
+            self.restitution = self.original_restitution
 
         # Handle rudder.
         self.rudder_force = (0, 0)

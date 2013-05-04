@@ -1,8 +1,8 @@
 TODO
 gameplay
-- separate physics tick from draw frame
 - rotational momentum, off-center collisions causing spinning
     - simple rigid attachments?
+- collisions wrong for inelastic collisions, restitution ~= 0
 - follow camera
 - zoom camera based on speed and how far apart multiple players are
 - large world

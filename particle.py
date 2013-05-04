@@ -83,7 +83,9 @@ def intersect(p1, p2):
     distance2 = vec.mag2(vec.vfrom(p1.pos, p2.pos))
     return distance2 <= (p1.radius + p2.radius)**2
 
-def collide_particles(p1, p2, restitution = 1):
+def collide_particles(p1, p2):
+    restitution = p1.restitution * p2.restitution
+
     # Don't collide immovable particles.
     if p1.immovable and p2.immovable:
         return
@@ -108,6 +110,11 @@ def collide_particles(p1, p2, restitution = 1):
     p1_initial = vec.dot(p1.velocity, normal)
     p2_initial = vec.dot(p2.velocity, normal)
 
+    # Don't collide if particles were actually moving away from each other, so
+    # they don't get stuck inside one another.
+    if p1_initial - p2_initial < 0:
+        return
+
     # Handle immovable particles specially.
     if p1.immovable:
         p2_final = -p2_initial * restitution
@@ -115,11 +122,6 @@ def collide_particles(p1, p2, restitution = 1):
             v2_tangent,
             vec.mul(normal, p2_final),
         )
-        return
-
-    # Don't collide if particles were actually moving away from each other, so
-    # they don't get stuck inside one another.
-    if p1_initial - p2_initial < 0:
         return
 
     # Elastic collision equations along normal component.

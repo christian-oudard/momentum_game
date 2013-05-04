@@ -41,13 +41,12 @@ class Environment(object):
 
         # Particle collisions.
         for (p1, p2) in every_pair(self.particles):
-            restitution = max(p1.restitution, p2.restitution)
-            collide_particles(p1, p2, restitution)
+            collide_particles(p1, p2)
 
         # Wall-particle collisions.
         for w in self.walls:
             for p in self.particles:
-                w.collide_wall(p, c.restitution_wall)
+                w.collide_wall(p)
 
         for o in self.particles:
             o.update(elapsed_seconds)

@@ -1,21 +1,24 @@
 from __future__ import division
 
 import vec
-from constants import epsilon
+import constants as c
 
 class Wall(object):
     graphics_type = 'wall'
 
-    def __init__(self, p1, p2):
+    def __init__(self, p1, p2, restitution=c.restitution_wall):
         self.p1 = p1
         self.p2 = p2
+        self.restitution = restitution
         self.tangent = vec.vfrom(self.p1, self.p2)
         self.normal = vec.perp(self.tangent)
 
     def update(self, elapsedticks):
         pass
 
-    def collide_wall(self, p, restitution = 1):
+    def collide_wall(self, p):
+        restitution = self.restitution * p.restitution
+
         # First, check that we haven't crossed through the wall due to
         # extreme speed and low framerate.
         intersection = intersect_segments(self.p1, self.p2, p.last_pos, p.pos)
@@ -50,7 +53,7 @@ class Wall(object):
             return
 
         # Test that p is headed toward the wall.
-        if vec.dot(p.velocity, v_dist) >= epsilon:
+        if vec.dot(p.velocity, v_dist) >= c.epsilon:
             return
 
         # We are definitely not off the ends of the segment, and close enough

@@ -41,6 +41,6 @@ player_boost_time = 0.075 # seconds
 player_boost_strength = 1600.0
 player_boost_heavy_time = 0.5 # seconds
 player_boost_heavy_multiplier = 6.0
-player_boost_restitution = 1.3
+player_boost_restitution_multiplier = 1.3
 
 player_health = 250

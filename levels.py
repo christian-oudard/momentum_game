@@ -51,8 +51,3 @@ bumper_test = [
     (Wall, [(-12,-8), (-8,-12)]),
     (Wall, [(12,8), (8,12)]),
 ]
-
-bumper_orbit_bug = [
-    (Bumper, dict(pos=(0,0), velocity=(0,0), radius=3)),
-    (Particle, dict(pos=(6, 0), velocity=(-1000,-1000), mass=1, radius=3.1)),
-]
