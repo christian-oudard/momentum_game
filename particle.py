@@ -15,6 +15,7 @@ class Particle(object):
         mass=1.0,
         radius=None,
         restitution=c.restitution_particle,
+        drag_rate=c.drag_rate,
     ):
         self.last_pos = pos
         self.pos = pos
@@ -24,6 +25,7 @@ class Particle(object):
             radius = math.sqrt(self.mass)
         self.radius = radius
         self.restitution = restitution
+        self.drag_rate = drag_rate
 
     @property
     def speed(self):
@@ -40,7 +42,7 @@ class Particle(object):
         # Apply drag.
         # Decrease the magnitude of the velocity vector by
         # the amount of drag.
-        drag = (c.drag_rate + extra_drag) * elapsed_seconds
+        drag = (self.drag_rate + extra_drag) * elapsed_seconds
         if drag > self.speed:
             self.velocity = (0, 0)
         elif drag != 0 and self.velocity != (0, 0):

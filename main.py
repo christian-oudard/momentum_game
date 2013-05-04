@@ -37,7 +37,7 @@ def main():
 
     env = Environment(inputs)
     disp = Display(env, SCREENSIZE)
-    env.load_level(levels.versus) # TEMP, hardcoded level selection.
+    env.load_level(levels.inelastic_collision_bug) # TEMP, hardcoded level selection.
 
     main_loop(env, disp)
 

@@ -11,34 +11,46 @@ from bumper import Bumper
 
 def assert_vectors_equal(a, b):
     for da, db in zip(a, b):
-        assert abs(da - db) < c.epsilon
+        assert abs(da - db) < c.epsilon, '{} != {}'.format(a, b)
 
 
-def test_bumper_orbit():
+def test_bumper():
     northwest = vec.norm((-1, -1))
     northeast = vec.norm((1, -1))
 
-    # Sometimes when a particle is sent into a bumper really fast, it gets
-    # stuck in an infinite bounce inside the bumper, and spins around it really fast.
-    env = Environment([])
+    env = Environment()
     env.load_level([
         (Bumper, dict(pos=(0,0), velocity=(0,0), radius=3)),
         (Particle, dict(pos=(6, 0), velocity=vec.norm(northwest, c.max_speed), mass=1, radius=3.1)),
     ])
 
-    bumper, orbiter = env.particles
+    # The particle starts out heading northwest.
+    bumper, particle = env.particles
+    assert_vectors_equal(vec.norm(particle.velocity), northwest)
 
-    # Starts heading northwest.
-    assert_vectors_equal(vec.norm(orbiter.velocity), northwest)
-
-    # After one tick, it bounces and is headed northeast
-    env.update(1)
-    assert_vectors_equal(vec.norm(orbiter.velocity), northeast)
-
-    # It continues to the northeast, and does not get stuck.
+    # After it bounces, it goes northeast.
     for _ in range(10):
         env.update(1)
-        assert_vectors_equal(vec.norm(orbiter.velocity), northeast)
+        assert_vectors_equal(vec.norm(particle.velocity), northeast)
+
+
+def test_collision():
+    env = Environment()
+    env.load_level([
+        (Particle, dict(pos=(-1, 0), velocity=(20, 0), mass=1, radius=1, restitution=1, drag_rate=0)),
+        (Particle, dict(pos=(1, 0), velocity=(0, 0), mass=1, radius=1, restitution=1, drag_rate=0)),
+    ])
+
+    # The left particle starts out heading to the right.
+    left, right = env.particles
+    assert_vectors_equal(left.velocity, (20, 0))
+    assert_vectors_equal(right.velocity, (0, 0))
+
+    # After it bounces, it has transferred all its momentum to the right particle.
+    for _ in range(10):
+        env.update(1)
+        assert_vectors_equal(left.velocity, (0, 0))
+        assert_vectors_equal(right.velocity, (20, 0))
 
 
 if __name__ == '__main__':
