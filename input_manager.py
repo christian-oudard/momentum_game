@@ -35,9 +35,7 @@ class InputManager(object):
             elif key == keys[1]:
                 self.axes_last[axis] = +1
 
-    def update(self):
-        pressed_keys = pg.key.get_pressed()
-
+    def update(self, pressed_keys):
         # Check axis values.
         for axis, keys in self.axes.items():
             neg = pressed_keys[keys[0]]
